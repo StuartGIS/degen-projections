@@ -192,7 +192,7 @@ st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), use_container_wi
 
 # Join draft results with live predictions and calculate projected points
 st.subheader("Drafted Players with Live-Tournament Projected Points")
-live_team_example = pd.read_csv("utah_draft_players_csv.csv")
+live_team_example = pd.read_csv("mexico_wwt_draft_results_csv.csv")
 
 merged_players_live_preds_df = pd.merge(live_team_example, dg_pga_live_predictions_df, left_on='Player', right_on='player_first_last', how='left')
 merged_players_live_preds_df['projected_points'] = (
