@@ -187,7 +187,16 @@ def reformat_name(name):
     return name
 
 dg_pga_live_predictions_df['player_first_last'] = dg_pga_live_predictions_df['player_name'].apply(reformat_name)
-dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_pos','win','top_5','top_10','top_20','make_cut','current_score','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+dg_pga_live_predictions_df['projected_points'] = (
+    dg_pga_live_predictions_df['win'] * 25 +
+    dg_pga_live_predictions_df['top_5'] * 10 +
+    dg_pga_live_predictions_df['top_10'] * 8 +
+    dg_pga_live_predictions_df['top_20'] * 6 +
+    # dg_pga_live_predictions_df['top_25'] * 5 +
+    dg_pga_live_predictions_df['make_cut'] * 1
+)
+dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_pos','projected_points','win','top_5','top_10','top_20','make_cut','current_score','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+
 st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), use_container_width=True)
 
 # Join draft results with live predictions and calculate projected points
