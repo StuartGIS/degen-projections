@@ -174,6 +174,7 @@ dg_pga_live_predictions_df = load_datagolf_live_preds(
 
 # show interactive table
 st.subheader("Datagolf Live Predictions")
+st.write("Will update every 5 minutes after the tournament begins")
 
 def reformat_name(name):
     parts = name.split(', ')
