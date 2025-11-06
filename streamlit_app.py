@@ -16,7 +16,7 @@ name_selection = st.selectbox("Select your name:", ["Choose your name","Alex","D
 
 if name_selection == 'Alex':
   st.write(
-    "Alex needs to watch his tone."
+    "Alex has wonderful ideas but needs to watch his tone."
 )
 elif name_selection == 'Dave':
   st.write(
@@ -41,7 +41,7 @@ elif name_selection == 'Stuart':
 st.divider()
 
 # adjust path if needed
-draft_results = pd.read_csv("mexico_example_draft_players_csv.csv")
+draft_results = pd.read_csv("mexico_wwt_draft_results_csv.csv")
 
 # quick check
 # print(draft_results.head())
@@ -49,6 +49,10 @@ draft_results = pd.read_csv("mexico_example_draft_players_csv.csv")
 # show interactive table
 st.header("World Wide Technology Championship")
 st.markdown("El Cardonal Golf Course  \nLos Cabos, Mexico  \nNovember 6-9, 2025")
+# Display an image from a local file
+st.image("/workspaces/degen-projections/el_cardonal.jpeg")
+
+
 st.subheader("Draft Results")
 st.dataframe(draft_results, use_container_width=True)
 
@@ -85,7 +89,7 @@ dg_pga_pre_tournament_predictions_df['projected_points'] = (
     dg_pga_pre_tournament_predictions_df['top_5'] * 10 +
     dg_pga_pre_tournament_predictions_df['top_10'] * 8 +
     dg_pga_pre_tournament_predictions_df['top_20'] * 6 +
-    dg_pga_pre_tournament_predictions_df['top_25'] * 5 +
+    # dg_pga_pre_tournament_predictions_df['top_25'] * 5 +
     dg_pga_pre_tournament_predictions_df['make_cut'] * 1
 )
 
