@@ -50,7 +50,7 @@ draft_results = pd.read_csv("mexico_wwt_draft_results_csv.csv")
 st.header("World Wide Technology Championship")
 st.markdown("El Cardonal Golf Course  \nLos Cabos, Mexico  \nNovember 6-9, 2025")
 # Display an image from a local file
-st.image("/workspaces/degen-projections/el_cardonal.jpeg")
+# st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 
 
 st.subheader("Draft Results")
