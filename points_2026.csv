@@ -1,7 +1,6 @@
-﻿Finishing Position,Points
-win,25
-top_5,10
-top_10,8
-top_20,6
-top_25,5
-make_cut,1
+﻿Finishing Position,Points,Total Player Points
+win,25,50
+top_5,10,25
+top_10,8,15
+top_20,6,7
+make_cut,1,1
