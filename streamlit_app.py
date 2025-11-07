@@ -208,6 +208,8 @@ all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live
 st.markdown('<a id="drafter-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Live-Tournament Scoring Summary")
 st.write("Will update every 5 minutes after the tournament begins")
+# Quick link to the Proposed 2026 Points System section
+st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
 st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_width=True)
 
 # Anchor for: Drafted Players with Live-Tournament Projected Points
