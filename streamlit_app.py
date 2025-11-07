@@ -213,6 +213,7 @@ st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_wid
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Live-Tournament Scoring")
+st.write("The 'win', 'top_5', 'top_10', 'top_20', and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
 st.dataframe(merged_players_live_preds_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
