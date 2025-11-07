@@ -53,14 +53,14 @@ st.divider()
 # --- Table of contents / navigation ---
 st.markdown("### Table of contents")
 toc_sections = [
-    ("Drafter Teams with Live-Tournament Projected Points", "drafter-live"),
-    ("Drafted Players with Live-Tournament Projected Points", "drafted-live"),
-    ("Datagolf Full Field Live Predictions", "dg-full-field-live"),
+    ("Drafter Teams Live-Tournament Scoring Summary", "drafter-live"),
+    ("Drafted Players Detailed Live-Tournament Scoring", "drafted-live"),
+    ("Full Field Detailed Live-Tournament Scoring", "dg-full-field-live"),
     ("Draft Results", "draft-results"),
     ("Proposed 2026 Points System", "points-2026"),
-    ("Drafter Teams with Pre-Tournament Projected Points", "drafter-pre"),
-    ("Drafted Players with Datagolf Pre-Tournament Projections", "drafted-pre"),
-    ("Datagolf Full Field Pre-Tournament Predictions", "dg-pre-tournament")
+    ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
+    ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
+    ("Full Field Detailed Pre-Tournament Projections", "dg-pre-tournament")
 ]
 
 for title, aid in toc_sections:
@@ -206,20 +206,20 @@ all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live
 
 # Anchor for: Drafter Teams with Live-Tournament Projected Points
 st.markdown('<a id="drafter-live"></a>', unsafe_allow_html=True)
-st.subheader("Drafter Teams with Live-Tournament Projected Points")
+st.subheader("Drafter Teams Live-Tournament Scoring Summary")
 st.write("Will update every 5 minutes after the tournament begins")
 st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_width=True)
 
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
-st.subheader("Drafted Players with Live-Tournament Projected Points")
+st.subheader("Drafted Players Detailed Live-Tournament Scoring")
 st.dataframe(merged_players_live_preds_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
 
 # Anchor for: Datagolf Full Field Live Predictions
 st.markdown('<a id="dg-full-field-live"></a>', unsafe_allow_html=True)
-st.subheader("Datagolf Full Field Live Predictions")
+st.subheader("Full Field Detailed Live-Tournament Scoring")
 st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
@@ -329,20 +329,20 @@ total_row = pd.DataFrame({
 all_drafter_picks_df = pd.concat([all_drafter_picks_df, total_row], ignore_index=True)
 # Anchor for: Drafter Teams with Pre-Tournament Projected Points
 st.markdown('<a id="drafter-pre"></a>', unsafe_allow_html=True)
-st.subheader("Drafter Teams with Pre-Tournament Projected Points")
+st.subheader("Drafter Teams Pre-Tournament Projections Summary")
 st.dataframe(all_drafter_picks_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
 
 # Anchor for: Drafted Players with Datagolf Pre-Tournament Projections
 st.markdown('<a id="drafted-pre"></a>', unsafe_allow_html=True)
-st.subheader("Drafted Players with Datagolf Pre-Tournament Projections")
+st.subheader("Drafted Players Detailed Pre-Tournament Projections")
 st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
 
 # Anchor for: Datagolf Pre-Tournament Predictions
 st.markdown('<a id="dg-pre-tournament"></a>', unsafe_allow_html=True)
-st.subheader("Datagolf Full Field Pre-Tournament Predictions")
+st.subheader("Full Field Detailed Pre-Tournament Projections")
 st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), use_container_width=True)
 
