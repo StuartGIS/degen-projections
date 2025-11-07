@@ -66,6 +66,7 @@ toc_sections = [
 for title, aid in toc_sections:
     # use a single f-string so both aid and title are interpolated correctly
     st.markdown(f'<a href="#{aid}">{title}</a><br/>', unsafe_allow_html=True)
+
 st.divider()
 
 # Live Datagolf Predictions
