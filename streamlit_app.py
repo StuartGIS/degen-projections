@@ -134,7 +134,7 @@ dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df['curre
 
 
 
-dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','current_score','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_score','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
 
 # Join draft results with live predictions and calculate projected points
 draft_results = pd.read_csv("mexico_wwt_draft_results_csv.csv")
@@ -148,7 +148,7 @@ merged_players_live_preds_df['projected_points'] = (
     # merged_players_live_preds_df['top_25'] * 5 +
     merged_players_live_preds_df['make_cut'] * 1
 )
-merged_players_live_preds_df = merged_players_live_preds_df[['Drafter','Pick','Round','player_first_last','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','current_score','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+merged_players_live_preds_df = merged_players_live_preds_df[['Drafter','Pick','Round','player_first_last','current_score','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
 
 
 # Live Tournament Drafter Teams and Projected Points Totals
