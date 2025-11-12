@@ -207,7 +207,7 @@ all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live
 # Anchor for: Drafter Teams with Live-Tournament Projected Points
 st.markdown('<a id="drafter-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Live-Tournament Scoring Summary")
-st.write("Will update every 5 minutes after the tournament begins")
+st.write("Will update every 5 minutes after the tournament begins. Before the tournament begins, there will be missing/incorrect entries in the live tournament tables because DataGolf is still showing information from the previous tournament.")
 # Quick link to the Proposed 2026 Points System section
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
 st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_width=True)
@@ -341,6 +341,8 @@ st.divider()
 # Anchor for: Drafted Players with Datagolf Pre-Tournament Projections
 st.markdown('<a id="drafted-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Pre-Tournament Projections")
+st.write("The 'win', 'top_5', 'top_10' and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
+
 st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
