@@ -92,14 +92,14 @@ def reformat_name(name):
     return name
 
 dg_pga_live_predictions_df['player_first_last'] = dg_pga_live_predictions_df['player_name'].apply(reformat_name)
-dg_pga_live_predictions_df['projected_points'] = (
-    dg_pga_live_predictions_df['win'] * 25 +
-    dg_pga_live_predictions_df['top_5'] * 10 +
-    dg_pga_live_predictions_df['top_10'] * 8 +
-    dg_pga_live_predictions_df['top_20'] * 6 +
-    # dg_pga_live_predictions_df['top_25'] * 5 +
-    dg_pga_live_predictions_df['make_cut'] * 1
-)
+# dg_pga_live_predictions_df['projected_points'] = (
+#     dg_pga_live_predictions_df['win'] * 25 +
+#     dg_pga_live_predictions_df['top_5'] * 10 +
+#     dg_pga_live_predictions_df['top_10'] * 8 +
+#     dg_pga_live_predictions_df['top_20'] * 6 +
+#     # dg_pga_live_predictions_df['top_25'] * 5 +
+#     dg_pga_live_predictions_df['make_cut'] * 1
+# )
 
 # derive current_points from current_pos using the tournament rules
 def current_points_from_pos(pos):
@@ -134,42 +134,42 @@ dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df['curre
 
 
 
-dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_score','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_score','current_pos','current_points','win','top_5','top_10','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
 
 # Join draft results with live predictions and calculate projected points
 draft_results = pd.read_csv("bermuda_2025_draft_results_csv.csv")
 
 merged_players_live_preds_df = pd.merge(draft_results, dg_pga_live_predictions_df, left_on='Player', right_on='player_first_last', how='left')
-merged_players_live_preds_df['projected_points'] = (
-    merged_players_live_preds_df['win'] * 25 +
-    merged_players_live_preds_df['top_5'] * 10 +
-    merged_players_live_preds_df['top_10'] * 8 +
-    merged_players_live_preds_df['top_20'] * 6 +
-    # merged_players_live_preds_df['top_25'] * 5 +
-    merged_players_live_preds_df['make_cut'] * 1
-)
-merged_players_live_preds_df = merged_players_live_preds_df[['Drafter','Pick','Round','player_first_last','current_score','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+# merged_players_live_preds_df['projected_points'] = (
+#     merged_players_live_preds_df['win'] * 25 +
+#     merged_players_live_preds_df['top_5'] * 10 +
+#     merged_players_live_preds_df['top_10'] * 8 +
+#     merged_players_live_preds_df['top_20'] * 6 +
+#     # merged_players_live_preds_df['top_25'] * 5 +
+#     merged_players_live_preds_df['make_cut'] * 1
+# )
+merged_players_live_preds_df = merged_players_live_preds_df[['Drafter','Pick','Round','player_first_last','current_score','current_pos','current_points','win','top_5','top_10','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
 
 
-# Live Tournament Drafter Teams and Projected Points Totals
+# Live Tournament Drafter Teams Points Totals
 
 # Filter for each drafter's picks
-alex_picks_df_live = merged_players_live_preds_df[merged_players_live_preds_df['Drafter'] == 'Alex'][['Round', 'player_first_last','current_points','projected_points']].rename(columns={
+alex_picks_df_live = merged_players_live_preds_df[merged_players_live_preds_df['Drafter'] == 'Alex'][['Round', 'player_first_last','current_points']].rename(columns={
     'player_first_last': 'alex_player',
-    'current_points': 'alex_player_current_points',
-    'projected_points': 'alex_player_projected_points'
+    'current_points': 'alex_player_current_points'
+    # 'projected_points': 'alex_player_projected_points'
 })
 
-dave_picks_df_live = merged_players_live_preds_df[merged_players_live_preds_df['Drafter'] == 'Dave'][['Round', 'player_first_last','current_points','projected_points']].rename(columns={
+dave_picks_df_live = merged_players_live_preds_df[merged_players_live_preds_df['Drafter'] == 'Dave'][['Round', 'player_first_last','current_points']].rename(columns={
     'player_first_last': 'dave_player',
-    'current_points': 'dave_player_current_points',
-    'projected_points': 'dave_player_projected_points'
+    'current_points': 'dave_player_current_points'
+    # 'projected_points': 'dave_player_projected_points'
 })
 
-stu_picks_df_live = merged_players_live_preds_df[merged_players_live_preds_df['Drafter'] == 'Stu'][['Round', 'player_first_last','current_points','projected_points']].rename(columns={
+stu_picks_df_live = merged_players_live_preds_df[merged_players_live_preds_df['Drafter'] == 'Stu'][['Round', 'player_first_last','current_points']].rename(columns={
     'player_first_last': 'stu_player',
-    'current_points': 'stu_player_current_points',
-    'projected_points': 'stu_player_projected_points'
+    'current_points': 'stu_player_current_points'
+    # 'projected_points': 'stu_player_projected_points'
 })
 
 # Merge the dataframes based on the 'Round' column
@@ -177,13 +177,13 @@ all_drafter_picks_df_live = pd.merge(alex_picks_df_live, dave_picks_df_live, on=
 all_drafter_picks_df_live = pd.merge(all_drafter_picks_df_live, stu_picks_df_live, on='Round', how='left')
 
 # Calculate total projected points for each drafter
-alex_total_points_live = all_drafter_picks_df_live['alex_player_projected_points'].sum()
+# alex_total_points_live = all_drafter_picks_df_live['alex_player_projected_points'].sum()
 alex_total_current_points_live = all_drafter_picks_df_live['alex_player_current_points'].sum()
 
-dave_total_points_live = all_drafter_picks_df_live['dave_player_projected_points'].sum()
+# dave_total_points_live = all_drafter_picks_df_live['dave_player_projected_points'].sum()
 dave_total_current_points_live = all_drafter_picks_df_live['dave_player_current_points'].sum()
 
-stu_total_points_live = all_drafter_picks_df_live['stu_player_projected_points'].sum()
+# stu_total_points_live = all_drafter_picks_df_live['stu_player_projected_points'].sum()
 stu_total_current_points_live = all_drafter_picks_df_live['stu_player_current_points'].sum()
 
 
@@ -192,13 +192,13 @@ total_row_live = pd.DataFrame({
     'Round': ['Total points'],
     'alex_player': [''], # Keep player columns empty for the total row
     'alex_player_current_points': [alex_total_current_points_live],
-    'alex_player_projected_points': [alex_total_points_live],
+    # 'alex_player_projected_points': [alex_total_points_live],
     'dave_player': [''],
     'dave_player_current_points': [dave_total_current_points_live],
-    'dave_player_projected_points': [dave_total_points_live],
+    # 'dave_player_projected_points': [dave_total_points_live],
     'stu_player': [''],
     'stu_player_current_points': [stu_total_current_points_live],
-    'stu_player_projected_points': [stu_total_points_live]
+    # 'stu_player_projected_points': [stu_total_points_live]
 })
 
 # Append the total row to the dataframe
@@ -215,7 +215,7 @@ st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_wid
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Live-Tournament Scoring")
-st.write("The 'win', 'top_5', 'top_10', 'top_20', and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
+st.write("The 'win', 'top_5', 'top_10' and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
 st.dataframe(merged_players_live_preds_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
@@ -268,8 +268,8 @@ dg_pga_pre_tournament_predictions_df['projected_points'] = (
     dg_pga_pre_tournament_predictions_df['win'] * 25 +
     dg_pga_pre_tournament_predictions_df['top_5'] * 10 +
     dg_pga_pre_tournament_predictions_df['top_10'] * 8 +
-    dg_pga_pre_tournament_predictions_df['top_20'] * 6 +
-    # dg_pga_pre_tournament_predictions_df['top_25'] * 5 +
+    # dg_pga_pre_tournament_predictions_df['top_20'] * 6 +
+    dg_pga_pre_tournament_predictions_df['top_25'] * 6 +
     dg_pga_pre_tournament_predictions_df['make_cut'] * 1
 )
 
@@ -283,12 +283,12 @@ def reformat_name(name):
     return name
 
 dg_pga_pre_tournament_predictions_df['player_first_last'] = dg_pga_pre_tournament_predictions_df['player_name'].apply(reformat_name)
-dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[['player_first_last','win','top_5','top_10','top_20','top_25','make_cut','projected_points','event_name']]
+dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[['player_first_last','win','top_5','top_10','top_25','make_cut','projected_points','event_name']]
 
 # Join draft results with pre-tournament predictions
 
 merged_players_pretourney_preds_df = pd.merge(draft_results, dg_pga_pre_tournament_predictions_df, left_on='Player', right_on='player_first_last', how='left')
-merged_players_pretourney_preds_df = merged_players_pretourney_preds_df[['Drafter','Pick','Round','player_first_last','win','top_5','top_10','top_20','top_25','make_cut','projected_points']]
+merged_players_pretourney_preds_df = merged_players_pretourney_preds_df[['Drafter','Pick','Round','player_first_last','win','top_5','top_10','top_25','make_cut','projected_points']]
 
 # Show drafter teams and projected points totals
 #filter 
@@ -333,6 +333,7 @@ all_drafter_picks_df = pd.concat([all_drafter_picks_df, total_row], ignore_index
 # Anchor for: Drafter Teams with Pre-Tournament Projected Points
 st.markdown('<a id="drafter-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Pre-Tournament Projections Summary")
+st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
 st.dataframe(all_drafter_picks_df.reset_index(drop=True), use_container_width=True)
 
 st.divider()
