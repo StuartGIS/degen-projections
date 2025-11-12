@@ -126,7 +126,7 @@ def current_points_from_pos(pos):
         return 25
     if 6 <= num <= 10:
         return 15
-    if 11 <= num <= 20:
+    if 11 <= num <= 25:
         return 7
     return 1
 
@@ -137,7 +137,7 @@ dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df['curre
 dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_score','current_pos','current_points','projected_points','win','top_5','top_10','top_20','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
 
 # Join draft results with live predictions and calculate projected points
-draft_results = pd.read_csv("mexico_wwt_draft_results_csv.csv")
+draft_results = pd.read_csv("bermuda_2025_draft_results_csv.csv")
 
 merged_players_live_preds_df = pd.merge(draft_results, dg_pga_live_predictions_df, left_on='Player', right_on='player_first_last', how='left')
 merged_players_live_preds_df['projected_points'] = (
@@ -228,7 +228,7 @@ st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), use_container_wi
 st.divider()
 
 # adjust path if needed
-draft_results = pd.read_csv("mexico_wwt_draft_results_csv.csv")
+draft_results = pd.read_csv("bermuda_2025_draft_results_csv.csv")
 
 # Anchor for: Draft Results
 st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
