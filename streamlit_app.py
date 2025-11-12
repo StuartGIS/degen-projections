@@ -43,8 +43,8 @@ elif name_selection == 'Stuart':
 st.divider()
 
 # show tournament info
-st.header("World Wide Technology Championship")
-st.markdown("El Cardonal Golf Course  \nLos Cabos, Mexico  \nNovember 6-9, 2025")
+st.header("Butterfield Bermuda Championship")
+st.markdown("Port Royal Golf Course  \nSouthampton Parish, Bermuda  \nNovember 13-16, 2025")
 # Display an image from a local file
 # st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 st.divider()
