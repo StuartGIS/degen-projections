@@ -43,8 +43,8 @@ elif name_selection == 'Stuart':
 st.divider()
 
 # show tournament info
-st.header("Butterfield Bermuda Championship")
-st.markdown("Port Royal Golf Course  \nSouthampton Parish, Bermuda  \nNovember 13-16, 2025")
+st.header("RSM Classic")
+st.markdown("Seaside Course, Plantation Course  \nSt. Simons Island, Georgia  \nNovember 20-23, 2025")
 # Display an image from a local file
 # st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 st.divider()
@@ -137,7 +137,7 @@ dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df['curre
 dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_score','current_pos','current_points','win','top_5','top_10','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
 
 # Join draft results with live predictions and calculate projected points
-draft_results = pd.read_csv("bermuda_2025_draft_results_csv.csv")
+draft_results = pd.read_csv("RSM_draft_results.csv")
 
 merged_players_live_preds_df = pd.merge(draft_results, dg_pga_live_predictions_df, left_on='Player', right_on='player_first_last', how='left')
 # merged_players_live_preds_df['projected_points'] = (
@@ -228,7 +228,7 @@ st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), use_container_wi
 st.divider()
 
 # adjust path if needed
-draft_results = pd.read_csv("bermuda_2025_draft_results_csv.csv")
+draft_results = pd.read_csv("RSM_draft_results.csv")
 
 # Anchor for: Draft Results
 st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
