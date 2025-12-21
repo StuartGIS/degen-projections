@@ -240,49 +240,71 @@ st.dataframe(draft_results, use_container_width=True)
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
 
-uploaded_files = st.file_uploader("Upload drafted points results CSVs", type="csv", accept_multiple_files=True)
+import os
+relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
 
-if uploaded_files:
-    relevant_files = [f for f in uploaded_files if f.name.endswith("drafted_points_results_csv.csv")]
-    if relevant_files:
-        all_data = []
-        points_wins = {'Alex': 0, 'Dave': 0, 'Stu': 0}
-        total_drafts = len(relevant_files)
-        for file in relevant_files:
-            df = pd.read_csv(file)
-            all_data.append(df)
-            # For points win
-            drafter_sums = df.groupby('Drafter')['current_points'].sum()
-            max_points = drafter_sums.max()
-            winners = drafter_sums[drafter_sums == max_points].index
-            for winner in winners:
-                points_wins[winner] += 1
-        combined_df = pd.concat(all_data, ignore_index=True)
-        # Group by Drafter
-        stats = combined_df.groupby('Drafter').agg(
+if relevant_files:
+    all_data = []
+    points_wins = {'Alex': 0, 'Dave': 0, 'Stu': 0}
+    total_drafts = len(relevant_files)
+    per_draft_pcts = []
+    for file in relevant_files:
+        df = pd.read_csv(file)
+        all_data.append(df)
+        # For points win
+        drafter_sums = df.groupby('Drafter')['current_points'].sum()
+        max_points = drafter_sums.max()
+        winners = drafter_sums[drafter_sums == max_points].index
+        for winner in winners:
+            points_wins[winner] += 1
+        # Per draft stats
+        draft_stats = df.groupby('Drafter').agg(
             total_players=('Drafter', 'size'),
             made_cut_count=('make_cut', 'sum'),
             top25_count=('current_points', lambda x: (x == 7).sum()),
             top10_count=('top_10', 'sum'),
             top5_count=('top_5', 'sum'),
             winner_count=('win', 'sum'),
+            sum_points=('current_points', 'sum'),
         ).reset_index()
-        stats['Made Cut %'] = (stats['made_cut_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
-        stats['Top 25 %'] = (stats['top25_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
-        stats['Top 10 %'] = (stats['top10_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
-        stats['Winner %'] = (stats['winner_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
-        stats['Winner Count'] = stats['winner_count']
-        stats['Points Win Count'] = stats['Drafter'].map(points_wins)
-        stats['Points Win %'] = (stats['Points Win Count'] / total_drafts * 100).round(1).astype(str) + '%'
-        stats['Tournaments Played'] = stats['total_players']
-        stats['Season Earnings'] = '$0'  # Placeholder, update calculation as needed
-        display_stats = stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Season Earnings']].set_index('Drafter').T
-        display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Winners %', 'Winners', 'Weekly Wins %', 'Weekly Wins', 'Tournaments Played', 'Season Earnings']
-        st.dataframe(display_stats, use_container_width=True)
-    else:
-        st.write("No relevant CSV files uploaded. Please upload files ending with 'drafted_points_results_csv.csv'.")
+        draft_stats['made_cut_pct'] = draft_stats['made_cut_count'] / draft_stats['total_players'] * 100
+        draft_stats['top25_pct'] = draft_stats['top25_count'] / draft_stats['total_players'] * 100
+        draft_stats['top10_pct'] = draft_stats['top10_count'] / draft_stats['total_players'] * 100
+        draft_stats['top5_pct'] = draft_stats['top5_count'] / draft_stats['total_players'] * 100
+        draft_stats['winner_pct'] = draft_stats['winner_count'] / draft_stats['total_players'] * 100
+        per_draft_pcts.append(draft_stats[['Drafter', 'made_cut_pct', 'top25_pct', 'top10_pct', 'top5_pct', 'winner_pct', 'total_players', 'winner_count', 'sum_points']])
+    combined_df = pd.concat(all_data, ignore_index=True)
+    # Average the percentages
+    all_pcts = pd.concat(per_draft_pcts, ignore_index=True)
+    avg_stats = all_pcts.groupby('Drafter').agg(
+        made_cut_pct=('made_cut_pct', 'mean'),
+        top25_pct=('top25_pct', 'mean'),
+        top10_pct=('top10_pct', 'mean'),
+        top5_pct=('top5_pct', 'mean'),
+        winner_pct=('winner_pct', 'mean'),
+        total_players=('total_players', 'sum'),
+        winner_count=('winner_count', 'sum'),
+        avg_weekly_points=('sum_points', 'mean'),
+        total_season_points=('sum_points', 'sum'),
+    ).reset_index()
+    # Format
+    avg_stats['Made Cut %'] = avg_stats['made_cut_pct'].round(2).astype(str) + '%'
+    avg_stats['Top 25 %'] = avg_stats['top25_pct'].round(2).astype(str) + '%'
+    avg_stats['Top 10 %'] = avg_stats['top10_pct'].round(2).astype(str) + '%'
+    avg_stats['Top 5 %'] = avg_stats['top5_pct'].round(2).astype(str) + '%'
+    avg_stats['Winner %'] = avg_stats['winner_pct'].round(2).astype(str) + '%'
+    avg_stats['Winner Count'] = avg_stats['winner_count']
+    avg_stats['Points Win Count'] = avg_stats['Drafter'].map(points_wins)
+    avg_stats['Points Win %'] = (avg_stats['Points Win Count'] / total_drafts * 100).round(2).astype(str) + '%'
+    avg_stats['Tournaments Played'] = total_drafts
+    avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1)
+    avg_stats['Total Season Points'] = avg_stats['total_season_points']
+    avg_stats['Season Earnings'] = '$0'  # Placeholder, update calculation as needed
+    display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
+    display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Weekly Wins %', 'Weekly Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
+    st.dataframe(display_stats, use_container_width=True)
 else:
-    st.write("Please upload the drafted points results CSVs to view season standings.")
+    st.write("No relevant CSV files found in the repository.")
 
 
 # Show 2026 Points System
