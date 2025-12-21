@@ -298,12 +298,50 @@ if relevant_files:
     avg_stats['Points Win Count'] = avg_stats['Drafter'].map(points_wins)
     avg_stats['Points Win %'] = (avg_stats['Points Win Count'] / total_drafts * 100).round(2).astype(str) + '%'
     avg_stats['Tournaments Played'] = total_drafts
-    avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1)
+    avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(2).map(lambda x: f"{x:.2f}")
     avg_stats['Total Season Points'] = avg_stats['total_season_points']
     avg_stats['Season Earnings'] = '$0'  # Placeholder, update calculation as needed
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
-    display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Weekly Wins %', 'Weekly Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
-    st.dataframe(display_stats, use_container_width=True)
+    display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Points Wins %', 'Points Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
+    
+    def highlight_rank(s):
+        parsed = []
+        for val in s:
+            if isinstance(val, str):
+                if val.endswith('%'):
+                    parsed.append(float(val[:-1]))
+                elif val.startswith('$'):
+                    parsed.append(float(val[1:]))
+                else:
+                    try:
+                        parsed.append(float(val))
+                    except:
+                        parsed.append(float('nan'))
+            else:
+                parsed.append(float(val))
+        series = pd.Series(parsed, index=s.index)
+        ranks = series.sort_values(ascending=False).dropna().unique()
+        if len(ranks) == 0:
+            return ['' for _ in s]
+        highest = ranks[0]
+        second = ranks[1] if len(ranks) > 1 else highest
+        lowest = ranks[-1]
+        styles = []
+        for val in parsed:
+            if pd.isna(val):
+                styles.append('')
+            elif val == highest:
+                styles.append('background-color: darkgreen; color: white')
+            elif val == second:
+                styles.append('background-color: darkgoldenrod; color: white')
+            elif val == lowest:
+                styles.append('background-color: darkred; color: white')
+            else:
+                styles.append('')
+        return styles
+    
+    styled_df = display_stats.style.apply(highlight_rank, axis=1)
+    st.dataframe(styled_df, use_container_width=True)
 else:
     st.write("No relevant CSV files found in the repository.")
 
