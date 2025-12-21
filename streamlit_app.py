@@ -57,7 +57,8 @@ toc_sections = [
     ("Drafted Players Detailed Live-Tournament Scoring", "drafted-live"),
     ("Full Field Detailed Live-Tournament Scoring", "dg-full-field-live"),
     ("Draft Results", "draft-results"),
-    ("Proposed 2026 Points System", "points-2026"),
+    ("Season Standings", "season-standings"),
+    ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
     ("Full Field Detailed Pre-Tournament Projections", "dg-pre-tournament")
@@ -208,7 +209,7 @@ all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live
 st.markdown('<a id="drafter-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Live-Tournament Scoring Summary")
 st.write("Will update every 5 minutes after the tournament begins. Before the tournament begins, there will be missing/incorrect entries in the live tournament tables because DataGolf is still showing information from the previous tournament.")
-# Quick link to the Proposed 2026 Points System section
+# Quick link to the 2026 Points System section
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
 st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_width=True)
 
@@ -235,11 +236,60 @@ st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
 st.subheader("Draft Results")
 st.dataframe(draft_results, use_container_width=True)
 
-# Show Proposed 2026 Points System
+# Season standings
+st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
+st.subheader("Season Standings")
+
+uploaded_files = st.file_uploader("Upload drafted points results CSVs", type="csv", accept_multiple_files=True)
+
+if uploaded_files:
+    relevant_files = [f for f in uploaded_files if f.name.endswith("drafted_points_results_csv.csv")]
+    if relevant_files:
+        all_data = []
+        points_wins = {'Alex': 0, 'Dave': 0, 'Stu': 0}
+        total_drafts = len(relevant_files)
+        for file in relevant_files:
+            df = pd.read_csv(file)
+            all_data.append(df)
+            # For points win
+            drafter_sums = df.groupby('Drafter')['current_points'].sum()
+            max_points = drafter_sums.max()
+            winners = drafter_sums[drafter_sums == max_points].index
+            for winner in winners:
+                points_wins[winner] += 1
+        combined_df = pd.concat(all_data, ignore_index=True)
+        # Group by Drafter
+        stats = combined_df.groupby('Drafter').agg(
+            total_players=('Drafter', 'size'),
+            made_cut_count=('make_cut', 'sum'),
+            top25_count=('current_points', lambda x: (x == 7).sum()),
+            top10_count=('top_10', 'sum'),
+            top5_count=('top_5', 'sum'),
+            winner_count=('win', 'sum'),
+        ).reset_index()
+        stats['Made Cut %'] = (stats['made_cut_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
+        stats['Top 25 %'] = (stats['top25_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
+        stats['Top 10 %'] = (stats['top10_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
+        stats['Winner %'] = (stats['winner_count'] / stats['total_players'] * 100).round(1).astype(str) + '%'
+        stats['Winner Count'] = stats['winner_count']
+        stats['Points Win Count'] = stats['Drafter'].map(points_wins)
+        stats['Points Win %'] = (stats['Points Win Count'] / total_drafts * 100).round(1).astype(str) + '%'
+        stats['Tournaments Played'] = stats['total_players']
+        stats['Season Earnings'] = '$0'  # Placeholder, update calculation as needed
+        display_stats = stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Season Earnings']].set_index('Drafter').T
+        display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Winners %', 'Winners', 'Weekly Wins %', 'Weekly Wins', 'Tournaments Played', 'Season Earnings']
+        st.dataframe(display_stats, use_container_width=True)
+    else:
+        st.write("No relevant CSV files uploaded. Please upload files ending with 'drafted_points_results_csv.csv'.")
+else:
+    st.write("Please upload the drafted points results CSVs to view season standings.")
+
+
+# Show 2026 Points System
 st.divider()
-# Anchor for: Proposed 2026 Points System
+# Anchor for: 2026 Points System
 st.markdown('<a id="points-2026"></a>', unsafe_allow_html=True)
-st.subheader("Proposed 2026 Points System")
+st.subheader("2026 Points System")
 points = pd.read_csv("points_2026.csv")
 st.dataframe(points)
 # st.dataframe(points.style.hide_index(), use_container_width=True)
