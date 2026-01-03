@@ -7,7 +7,7 @@ import requests
 # from io import StringIO
 import json
 
-st.title("🏌️‍♂️ Degenerates")
+st.markdown('<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"><h1 style="font-family: \'Lobster\', cursive; color: gold; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">🏌️‍♂️ Degenerates</h1>', unsafe_allow_html=True)
 st.divider()
 st.write(
     "Select your name and a special message will pop up!"
