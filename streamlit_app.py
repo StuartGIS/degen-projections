@@ -229,7 +229,7 @@ st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), width='stretch')
 st.divider()
 
 # adjust path if needed
-draft_results = pd.read_csv("RSM_draft_results.csv")
+draft_results = pd.read_csv("sony_2026_drafts_results_csv.csv")
 
 # Anchor for: Draft Results
 st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
