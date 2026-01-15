@@ -43,8 +43,8 @@ elif name_selection == 'Stuart':
 st.divider()
 
 # show tournament info
-st.header("RSM Classic")
-st.markdown("Seaside Course, Plantation Course  \nSt. Simons Island, Georgia  \nNovember 20-23, 2025")
+st.header("Sony Open")
+st.markdown("Waiʻalae Country Club  \nHonolulu, Hawaii  \nJanuary 15-18, 2026")
 # Display an image from a local file
 # st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 st.divider()
