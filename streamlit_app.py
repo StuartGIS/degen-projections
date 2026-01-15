@@ -211,20 +211,20 @@ st.subheader("Drafter Teams Live-Tournament Scoring Summary")
 st.write("Will update every 5 minutes after the tournament begins. Before the tournament begins, there will be missing/incorrect entries in the live tournament tables because DataGolf is still showing information from the previous tournament.")
 # Quick link to the 2026 Points System section
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
-st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), use_container_width=True)
+st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), width='stretch')
 
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Live-Tournament Scoring")
 st.write("The 'win', 'top_5', 'top_10' and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
-st.dataframe(merged_players_live_preds_df.reset_index(drop=True), use_container_width=True)
+st.dataframe(merged_players_live_preds_df.reset_index(drop=True), width='stretch')
 
 st.divider()
 
 # Anchor for: Datagolf Full Field Live Predictions
 st.markdown('<a id="dg-full-field-live"></a>', unsafe_allow_html=True)
 st.subheader("Full Field Detailed Live-Tournament Scoring")
-st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), use_container_width=True)
+st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), width='stretch')
 
 st.divider()
 
@@ -234,7 +234,7 @@ draft_results = pd.read_csv("RSM_draft_results.csv")
 # Anchor for: Draft Results
 st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
 st.subheader("Draft Results")
-st.dataframe(draft_results, use_container_width=True)
+st.dataframe(draft_results, width='stretch')
 
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
@@ -341,7 +341,7 @@ if relevant_files:
         return styles
     
     styled_df = display_stats.style.apply(highlight_rank, axis=1)
-    st.dataframe(styled_df, use_container_width=True)
+    st.dataframe(styled_df, width='stretch')
 else:
     st.write("No relevant CSV files found in the repository.")
 
@@ -353,7 +353,7 @@ st.markdown('<a id="points-2026"></a>', unsafe_allow_html=True)
 st.subheader("2026 Points System")
 points = pd.read_csv("points_2026.csv")
 st.dataframe(points)
-# st.dataframe(points.style.hide_index(), use_container_width=True)
+# st.dataframe(points.style.hide_index(), width='stretch')
 
 
 st.divider()
@@ -445,7 +445,7 @@ all_drafter_picks_df = pd.concat([all_drafter_picks_df, total_row], ignore_index
 st.markdown('<a id="drafter-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Pre-Tournament Projections Summary")
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
-st.dataframe(all_drafter_picks_df.reset_index(drop=True), use_container_width=True)
+st.dataframe(all_drafter_picks_df.reset_index(drop=True), width='stretch')
 
 st.divider()
 
@@ -454,12 +454,12 @@ st.markdown('<a id="drafted-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Pre-Tournament Projections")
 st.write("The 'win', 'top_5', 'top_10' and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
 
-st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), use_container_width=True)
+st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), width='stretch')
 
 st.divider()
 
 # Anchor for: Datagolf Pre-Tournament Predictions
 st.markdown('<a id="dg-pre-tournament"></a>', unsafe_allow_html=True)
 st.subheader("Full Field Detailed Pre-Tournament Projections")
-st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), use_container_width=True)
+st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width='stretch')
 
