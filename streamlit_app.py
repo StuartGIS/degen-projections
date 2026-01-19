@@ -346,7 +346,7 @@ if relevant_files:
     avg_stats['Points Win Count'] = points_win_counts.astype(str)
     avg_stats['Points Win %'] = (points_win_counts / total_drafts * 100).round(2).astype(str) + '%'
     avg_stats['Tournaments Played'] = str(total_drafts)
-    avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(2).map(lambda x: f"{x:.2f}")
+    avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1).map(lambda x: f"{x:.1f}")
     avg_stats['Total Season Points'] = avg_stats['total_season_points'].astype(str)
     avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$0', 'Dave': '$10', 'Stu': '$0'})
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
