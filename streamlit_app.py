@@ -79,6 +79,28 @@ def load_datagolf_live_preds(url: str) -> pd.DataFrame:
         st.error(f"Failed to load data: {e}")
         return pd.DataFrame()
 
+def style_live_rows(row):
+    pos_str = str(row['current_pos']).strip().upper()
+    if pos_str in ('WD', 'CUT', 'MC', '') or pd.isna(row['current_pos']):
+        return ['background-color: rgba(139, 0, 0, 0.3); color: white'] * len(row)
+    if pos_str.startswith('T'):
+        pos_str = pos_str[1:]
+    try:
+        pos_num = int(pos_str)
+    except:
+        return ['background-color: rgba(139, 0, 0, 0.3); color: white'] * len(row)
+    if pos_num == 1:
+        color = 'rgba(144, 238, 144, 0.5)'  # light green, semi-transparent
+    elif 2 <= pos_num <= 5:
+        color = 'rgba(50, 205, 50, 0.5)'  # lime green, semi-transparent
+    elif 6 <= pos_num <= 10:
+        color = 'rgba(34, 139, 34, 0.5)'  # forest green, semi-transparent
+    elif 11 <= pos_num <= 25:
+        color = 'rgba(0, 100, 0, 0.5)'  # dark green, semi-transparent
+    else:
+        color = 'rgba(0, 100, 0, 0.2)'  # darkest green, semi-transparent
+    return [f'background-color: {color}; color: white'] * len(row)
+
 # adjust URL if needed
 dg_pga_live_predictions_df = load_datagolf_live_preds(
     "https://feeds.datagolf.com/preds/in-play?tour=pga&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
@@ -143,6 +165,9 @@ dg_pga_live_predictions_df[['win', 'top_5', 'top_10', 'make_cut']] *= 100
 # Sort by Score in ascending order
 dg_pga_live_predictions_df = dg_pga_live_predictions_df.sort_values('current_score')
 
+# Apply conditional formatting
+styled_dg_live = dg_pga_live_predictions_df.style.apply(style_live_rows, axis=1)
+
 # Join draft results with live predictions and calculate projected points
 draft_results = pd.read_csv("sony_2026_drafts_results_csv.csv")
 
@@ -159,6 +184,9 @@ merged_players_live_preds_df = merged_players_live_preds_df[['Drafter', 'Pick', 
 
 # Sort by Score in ascending order
 merged_players_live_preds_df = merged_players_live_preds_df.sort_values('current_score')
+
+# Apply conditional formatting
+styled_drafted_live = merged_players_live_preds_df.style.apply(style_live_rows, axis=1)
 
 
 # Live Tournament Drafter Teams Points Totals
@@ -239,7 +267,7 @@ st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), width='stretch', 
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Live-Tournament Scoring")
 st.write("The 'Win', 'Top 5', 'Top 10' and 'Make Cut' columns reflect live DataGolf projections.")
-st.dataframe(merged_players_live_preds_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+st.dataframe(styled_drafted_live, width='stretch', hide_index=True, column_config={
     'Round': st.column_config.TextColumn('Round'),
     'current_pos': st.column_config.TextColumn('Pos'),
     'player_first_last': st.column_config.TextColumn('Golfer'),
@@ -257,7 +285,7 @@ st.divider()
 # Anchor for: Datagolf Full Field Live Predictions
 st.markdown('<a id="dg-full-field-live"></a>', unsafe_allow_html=True)
 st.subheader("Full Field Detailed Live-Tournament Scoring")
-st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+st.dataframe(styled_dg_live, width='stretch', hide_index=True, column_config={
     'player_first_last': st.column_config.TextColumn('Golfer'),
     'current_score': st.column_config.TextColumn('Score'),
     'current_pos': st.column_config.TextColumn('Pos'),
