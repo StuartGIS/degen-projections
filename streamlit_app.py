@@ -135,7 +135,7 @@ dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df['curre
 
 
 
-dg_pga_live_predictions_df = dg_pga_live_predictions_df[['player_first_last','current_score','current_pos','current_points','win','top_5','top_10','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+dg_pga_live_predictions_df = dg_pga_live_predictions_df[['current_pos', 'player_first_last', 'current_score', 'current_points', 'round', 'thru', 'today', 'R1', 'R2', 'R3', 'R4', 'win', 'top_5', 'top_10', 'make_cut', 'last_update', 'event_name']]
 
 # Join draft results with live predictions and calculate projected points
 draft_results = pd.read_csv("sony_2026_drafts_results_csv.csv")
@@ -229,15 +229,43 @@ st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), width='stretch', 
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Live-Tournament Scoring")
-st.write("The 'win', 'top_5', 'top_10' and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
-st.dataframe(merged_players_live_preds_df.reset_index(drop=True), width='stretch', hide_index=True)
+st.write("The 'win', 'Top 5', 'Top 10' and 'Make Cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
+st.dataframe(merged_players_live_preds_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+    'player_first_last': st.column_config.TextColumn('Golfer'),
+    'current_score': st.column_config.TextColumn('Score'),
+    'current_pos': st.column_config.TextColumn('Pos'),
+    'current_points': st.column_config.NumberColumn('Points'),
+    'win': st.column_config.NumberColumn('Win'),
+    'top_5': st.column_config.NumberColumn('Top 5'),
+    'top_10': st.column_config.NumberColumn('Top 10'),
+    'make_cut': st.column_config.NumberColumn('Make Cut'),
+    'round': st.column_config.TextColumn('Round'),
+    'thru': st.column_config.TextColumn('Thru'),
+    'today': st.column_config.TextColumn('Today'),
+    'last_update': st.column_config.TextColumn('Last Update'),
+    'event_name': st.column_config.TextColumn('Event Name')
+})
 
 st.divider()
 
 # Anchor for: Datagolf Full Field Live Predictions
 st.markdown('<a id="dg-full-field-live"></a>', unsafe_allow_html=True)
 st.subheader("Full Field Detailed Live-Tournament Scoring")
-st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), width='stretch', hide_index=True)
+st.dataframe(dg_pga_live_predictions_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+    'player_first_last': st.column_config.TextColumn('Golfer'),
+    'current_score': st.column_config.TextColumn('Score'),
+    'current_pos': st.column_config.TextColumn('Pos'),
+    'current_points': st.column_config.NumberColumn('Points'),
+    'win': st.column_config.NumberColumn('Win'),
+    'top_5': st.column_config.NumberColumn('Top 5'),
+    'top_10': st.column_config.NumberColumn('Top 10'),
+    'make_cut': st.column_config.NumberColumn('Make Cut'),
+    'round': st.column_config.TextColumn('Round'),
+    'thru': st.column_config.TextColumn('Thru'),
+    'today': st.column_config.TextColumn('Today'),
+    'last_update': st.column_config.TextColumn('Last Update'),
+    'event_name': st.column_config.TextColumn('Event Name')
+})
 
 st.divider()
 
@@ -355,7 +383,7 @@ if relevant_files:
         return styles
     
     styled_df = display_stats.style.apply(highlight_rank, axis=1)
-    st.dataframe(styled_df, width='stretch', hide_index=True)
+    st.dataframe(styled_df, width='stretch')
 else:
     st.write("No relevant CSV files found in the repository.")
 
@@ -366,6 +394,14 @@ st.divider()
 st.markdown('<a id="points-2026"></a>', unsafe_allow_html=True)
 st.subheader("2026 Points System")
 points = pd.read_csv("points_2026.csv")
+# Rename values in Finishing Position column for user-facing display
+points['Finishing Position'] = points['Finishing Position'].replace({
+    '1st': 'Win',
+    '2nd-5th': 'Top 5',
+    '6th-10th': 'Top 10',
+    '11th-25th': 'Top 25',
+    'Made Cut': 'Make Cut'
+})
 st.dataframe(points, hide_index=True)
 # st.dataframe(points.style.hide_index(), width='stretch')
 
@@ -462,7 +498,14 @@ all_drafter_picks_df['Round'] = all_drafter_picks_df['Round'].astype(str)
 st.markdown('<a id="drafter-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Pre-Tournament Projections Summary")
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
-st.dataframe(all_drafter_picks_df.reset_index(drop=True), width='stretch', hide_index=True)
+st.dataframe(all_drafter_picks_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+    'alex_player': st.column_config.TextColumn('Alex'),
+    'alex_player_projected_points': st.column_config.NumberColumn('Alex Projected Points'),
+    'dave_player': st.column_config.TextColumn('Dave'),
+    'dave_player_projected_points': st.column_config.NumberColumn('Dave Projected Points'),
+    'stu_player': st.column_config.TextColumn('Stu'),
+    'stu_player_projected_points': st.column_config.NumberColumn('Stu Projected Points')
+})
 
 st.divider()
 
@@ -471,12 +514,29 @@ st.markdown('<a id="drafted-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Pre-Tournament Projections")
 st.write("The 'win', 'top_5', 'top_10' and 'make_cut' columns reflect DataGolf projections and should be read as percentages. For example, if a player has a 'win' value of 0.12, then they have a 12% chance of winning.")
 
-st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), width='stretch', hide_index=True)
+st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+    'player_first_last': st.column_config.TextColumn('Golfer'),
+    'win': st.column_config.NumberColumn('Win'),
+    'top_5': st.column_config.NumberColumn('Top 5'),
+    'top_10': st.column_config.NumberColumn('Top 10'),
+    'top_25': st.column_config.NumberColumn('Top 25'),
+    'make_cut': st.column_config.NumberColumn('Make Cut'),
+    'projected_points': st.column_config.NumberColumn('Projected Points')
+})
 
 st.divider()
 
 # Anchor for: Datagolf Pre-Tournament Predictions
 st.markdown('<a id="dg-pre-tournament"></a>', unsafe_allow_html=True)
 st.subheader("Full Field Detailed Pre-Tournament Projections")
-st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width='stretch', hide_index=True)
+st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+    'player_first_last': st.column_config.TextColumn('Golfer'),
+    'win': st.column_config.NumberColumn('Win'),
+    'top_5': st.column_config.NumberColumn('Top 5'),
+    'top_10': st.column_config.NumberColumn('Top 10'),
+    'top_25': st.column_config.NumberColumn('Top 25'),
+    'make_cut': st.column_config.NumberColumn('Make Cut'),
+    'projected_points': st.column_config.NumberColumn('Projected Points'),
+    'event_name': st.column_config.TextColumn('Event Name')
+})
 
