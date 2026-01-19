@@ -101,6 +101,67 @@ def style_live_rows(row):
         color = 'rgba(0, 100, 0, 0.2)'  # darkest green, semi-transparent
     return [f'background-color: {color}; color: white'] * len(row)
 
+def style_drafter_live_rows(row):
+    styles = [''] * len(row)  # default no style
+    # Columns: ['Round', 'Alex', 'Alex Points', 'Dave', 'Dave Points', 'Stu', 'Stu Points']
+    # Indices: 0: Round, 1: Alex, 2: Alex Points, 3: Dave, 4: Dave Points, 5: Stu, 6: Stu Points
+    
+    # For Alex
+    alex_points = row['Alex Points']
+    if alex_points == 50:
+        color = 'rgba(144, 238, 144, 0.5)'
+    elif alex_points == 25:
+        color = 'rgba(50, 205, 50, 0.5)'
+    elif alex_points == 15:
+        color = 'rgba(34, 139, 34, 0.5)'
+    elif alex_points == 7:
+        color = 'rgba(0, 100, 0, 0.2)'
+    elif alex_points == 0:
+        color = 'rgba(139, 0, 0, 0.3)'
+    else:
+        color = None
+    if color:
+        styles[1] = f'background-color: {color}; color: white'  # Alex player
+        styles[2] = f'background-color: {color}; color: white'  # Alex Points
+    
+    # For Dave
+    dave_points = row['Dave Points']
+    if dave_points == 50:
+        color = 'rgba(144, 238, 144, 0.5)'
+    elif dave_points == 25:
+        color = 'rgba(50, 205, 50, 0.5)'
+    elif dave_points == 15:
+        color = 'rgba(34, 139, 34, 0.5)'
+    elif dave_points == 7:
+        color = 'rgba(0, 100, 0, 0.2)'
+    elif dave_points == 0:
+        color = 'rgba(139, 0, 0, 0.3)'
+    else:
+        color = None
+    if color:
+        styles[3] = f'background-color: {color}; color: white'  # Dave player
+        styles[4] = f'background-color: {color}; color: white'  # Dave Points
+    
+    # For Stu
+    stu_points = row['Stu Points']
+    if stu_points == 50:
+        color = 'rgba(144, 238, 144, 0.5)'
+    elif stu_points == 25:
+        color = 'rgba(50, 205, 50, 0.5)'
+    elif stu_points == 15:
+        color = 'rgba(34, 139, 34, 0.5)'
+    elif stu_points == 7:
+        color = 'rgba(0, 100, 0, 0.2)'
+    elif stu_points == 0:
+        color = 'rgba(139, 0, 0, 0.3)'
+    else:
+        color = None
+    if color:
+        styles[5] = f'background-color: {color}; color: white'  # Stu player
+        styles[6] = f'background-color: {color}; color: white'  # Stu Points
+    
+    return styles
+
 # adjust URL if needed
 dg_pga_live_predictions_df = load_datagolf_live_preds(
     "https://feeds.datagolf.com/preds/in-play?tour=pga&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
@@ -261,7 +322,8 @@ st.subheader("Drafter Teams Live-Tournament Scoring Summary")
 st.write("Will update every 5 minutes after the tournament begins. Before the tournament begins, there will be missing/incorrect entries in the live tournament tables because DataGolf is still showing information from the previous tournament.")
 # Quick link to the 2026 Points System section
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
-st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), width='stretch', hide_index=True)
+styled_drafter_live = all_drafter_picks_df_live.style.apply(style_drafter_live_rows, axis=1)
+st.dataframe(styled_drafter_live, width='stretch', hide_index=True)
 
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
