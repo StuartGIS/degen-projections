@@ -242,7 +242,7 @@ st.dataframe(draft_results, width='stretch')
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
-st.write("Standings below are sample standings from two events in the fall of 2025, and do not reflect the actual 2025 Degenerates standings. See the [google sheet](https://docs.google.com/spreadsheets/d/1sy4gsihWpvQSDmyi3jIwcdN22dBbCdEbXE7umGEJs1c/edit?gid=0#gid=0) for actual 2025 standings. In 2026, Degenerates standings will be shown below and updated after every tournament.")
+st.write("Updated Jan 19, 2026, after Sony Open completion.")
 
 import os
 relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
@@ -275,7 +275,7 @@ if relevant_files:
         draft_stats['top25_pct'] = draft_stats['top25_count'] / draft_stats['total_players'] * 100
         draft_stats['top10_pct'] = draft_stats['top10_count'] / draft_stats['total_players'] * 100
         draft_stats['top5_pct'] = draft_stats['top5_count'] / draft_stats['total_players'] * 100
-        draft_stats['winner_pct'] = draft_stats['winner_count'] / draft_stats['total_players'] * 100
+        draft_stats['winner_pct'] = (draft_stats['winner_count'] > 0).astype(int) * 100
         per_draft_pcts.append(draft_stats[['Drafter', 'made_cut_pct', 'top25_pct', 'top10_pct', 'top5_pct', 'winner_pct', 'total_players', 'winner_count', 'sum_points']])
     combined_df = pd.concat(all_data, ignore_index=True)
     # Average the percentages
