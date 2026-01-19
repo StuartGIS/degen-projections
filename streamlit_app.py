@@ -166,6 +166,32 @@ def style_drafter_live_rows(row):
         styles[5] = f'background-color: {color}; color: white'  # Stu player
         styles[6] = f'background-color: {color}; color: white'  # Stu Points
     
+    # Special handling for Total points row
+    if row['Round'] == 'Total points':
+        points_values = [row['Alex Points'], row['Dave Points'], row['Stu Points']]
+        sorted_values = sorted(set(points_values), reverse=True)  # unique sorted descending
+        if len(sorted_values) >= 3:
+            max_val = sorted_values[0]
+            second_val = sorted_values[1]
+            min_val = sorted_values[2]
+        elif len(sorted_values) == 2:
+            max_val = sorted_values[0]
+            second_val = sorted_values[1]
+            min_val = sorted_values[1]  # if only two unique, second and min same
+        else:
+            max_val = sorted_values[0]
+            second_val = sorted_values[0]
+            min_val = sorted_values[0]
+        
+        for i, col in enumerate(['Alex Points', 'Dave Points', 'Stu Points']):
+            val = row[col]
+            if val == max_val:
+                styles[2 + i*2] = 'background-color: darkgreen; color: white'
+            elif val == second_val:
+                styles[2 + i*2] = 'background-color: darkgoldenrod; color: white'
+            elif val == min_val:
+                styles[2 + i*2] = 'background-color: darkred; color: white'
+    
     return styles
 
 # adjust URL if needed
