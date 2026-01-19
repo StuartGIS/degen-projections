@@ -208,13 +208,23 @@ all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live
 # Convert Round column to string to handle mixed types
 all_drafter_picks_df_live['Round'] = all_drafter_picks_df_live['Round'].astype(str)
 
+# Rename columns for user-facing display
+all_drafter_picks_df_live = all_drafter_picks_df_live.rename(columns={
+    'alex_player': 'Alex',
+    'alex_player_current_points': 'Alex Points',
+    'dave_player': 'Dave',
+    'dave_player_current_points': 'Dave Points',
+    'stu_player': 'Stu',
+    'stu_player_current_points': 'Stu Points'
+})
+
 # Anchor for: Drafter Teams with Live-Tournament Projected Points
 st.markdown('<a id="drafter-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Live-Tournament Scoring Summary")
 st.write("Will update every 5 minutes after the tournament begins. Before the tournament begins, there will be missing/incorrect entries in the live tournament tables because DataGolf is still showing information from the previous tournament.")
 # Quick link to the 2026 Points System section
 st.markdown('See <a href="#points-2026">Degen points scoring system</a>.', unsafe_allow_html=True)
-st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), width='stretch')
+st.dataframe(all_drafter_picks_df_live.reset_index(drop=True), width='stretch', hide_index=True)
 
 # Anchor for: Drafted Players with Live-Tournament Projected Points
 st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
