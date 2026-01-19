@@ -588,9 +588,6 @@ dg_pga_pre_tournament_predictions_df[['win', 'top_5', 'top_10', 'top_25', 'make_
 merged_players_pretourney_preds_df = pd.merge(draft_results, dg_pga_pre_tournament_predictions_df, left_on='Player', right_on='player_first_last', how='left')
 merged_players_pretourney_preds_df = merged_players_pretourney_preds_df[['Drafter','Pick','Round','player_first_last','win','top_5','top_10','top_25','make_cut','projected_points']]
 
-# Convert probability columns to percentages for display
-merged_players_pretourney_preds_df[['win', 'top_5', 'top_10', 'top_25', 'make_cut']] *= 100
-
 # Show drafter teams and projected points totals
 #filter 
 # Filter for each drafter's picks
