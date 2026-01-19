@@ -155,7 +155,7 @@ merged_players_live_preds_df = pd.merge(draft_results, dg_pga_live_predictions_d
 #     # merged_players_live_preds_df['top_25'] * 5 +
 #     merged_players_live_preds_df['make_cut'] * 1
 # )
-merged_players_live_preds_df = merged_players_live_preds_df[['Drafter','Pick','Round','player_first_last','current_score','current_pos','current_points','win','top_5','top_10','make_cut','round','thru','today','R1','R2','R3','R4','last_update','event_name']]
+merged_players_live_preds_df = merged_players_live_preds_df[['Drafter', 'Pick', 'Round', 'current_pos', 'player_first_last', 'current_score', 'current_points', 'thru', 'R1', 'R2', 'R3', 'R4', 'win', 'top_5', 'top_10', 'make_cut']]
 
 # Sort by Score in ascending order
 merged_players_live_preds_df = merged_players_live_preds_df.sort_values('current_score')
@@ -240,19 +240,16 @@ st.markdown('<a id="drafted-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Detailed Live-Tournament Scoring")
 st.write("The 'Win', 'Top 5', 'Top 10' and 'Make Cut' columns reflect live DataGolf projections.")
 st.dataframe(merged_players_live_preds_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
+    'Round': st.column_config.TextColumn('Round'),
+    'current_pos': st.column_config.TextColumn('Pos'),
     'player_first_last': st.column_config.TextColumn('Golfer'),
     'current_score': st.column_config.TextColumn('Score'),
-    'current_pos': st.column_config.TextColumn('Pos'),
     'current_points': st.column_config.NumberColumn('Points'),
+    'thru': st.column_config.TextColumn('Thru'),
     'win': st.column_config.NumberColumn('Win', format='%.1f%%'),
     'top_5': st.column_config.NumberColumn('Top 5', format='%.1f%%'),
     'top_10': st.column_config.NumberColumn('Top 10', format='%.1f%%'),
-    'make_cut': st.column_config.NumberColumn('Make Cut', format='%.1f%%'),
-    'round': st.column_config.TextColumn('Round'),
-    'thru': st.column_config.TextColumn('Thru'),
-    'today': st.column_config.TextColumn('Today'),
-    'last_update': st.column_config.TextColumn('Last Update'),
-    'event_name': st.column_config.TextColumn('Event Name')
+    'make_cut': st.column_config.NumberColumn('Make Cut', format='%.1f%%')
 })
 
 st.divider()
