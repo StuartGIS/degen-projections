@@ -205,6 +205,9 @@ total_row_live = pd.DataFrame({
 # Append the total row to the dataframe
 all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live], ignore_index=True)
 
+# Convert Round column to string to handle mixed types
+all_drafter_picks_df_live['Round'] = all_drafter_picks_df_live['Round'].astype(str)
+
 # Anchor for: Drafter Teams with Live-Tournament Projected Points
 st.markdown('<a id="drafter-live"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Live-Tournament Scoring Summary")
@@ -294,12 +297,13 @@ if relevant_files:
     avg_stats['Top 10 %'] = avg_stats['top10_pct'].round(2).astype(str) + '%'
     avg_stats['Top 5 %'] = avg_stats['top5_pct'].round(2).astype(str) + '%'
     avg_stats['Winner %'] = avg_stats['winner_pct'].round(2).astype(str) + '%'
-    avg_stats['Winner Count'] = avg_stats['winner_count']
-    avg_stats['Points Win Count'] = avg_stats['Drafter'].map(points_wins)
-    avg_stats['Points Win %'] = (avg_stats['Points Win Count'] / total_drafts * 100).round(2).astype(str) + '%'
-    avg_stats['Tournaments Played'] = total_drafts
+    avg_stats['Winner Count'] = avg_stats['winner_count'].astype(str)
+    points_win_counts = avg_stats['Drafter'].map(points_wins)
+    avg_stats['Points Win Count'] = points_win_counts.astype(str)
+    avg_stats['Points Win %'] = (points_win_counts / total_drafts * 100).round(2).astype(str) + '%'
+    avg_stats['Tournaments Played'] = str(total_drafts)
     avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(2).map(lambda x: f"{x:.2f}")
-    avg_stats['Total Season Points'] = avg_stats['total_season_points']
+    avg_stats['Total Season Points'] = avg_stats['total_season_points'].astype(str)
     avg_stats['Season Earnings'] = '$0'  # Placeholder, update calculation as needed
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
     display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Points Wins %', 'Points Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
@@ -441,6 +445,9 @@ total_row = pd.DataFrame({
 
 # Append the total row to the dataframe
 all_drafter_picks_df = pd.concat([all_drafter_picks_df, total_row], ignore_index=True)
+
+# Convert Round column to string to handle mixed types
+all_drafter_picks_df['Round'] = all_drafter_picks_df['Round'].astype(str)
 # Anchor for: Drafter Teams with Pre-Tournament Projected Points
 st.markdown('<a id="drafter-pre"></a>', unsafe_allow_html=True)
 st.subheader("Drafter Teams Pre-Tournament Projections Summary")
