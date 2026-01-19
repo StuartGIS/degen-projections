@@ -115,6 +115,8 @@ def style_drafter_live_rows(row):
     elif alex_points == 15:
         color = 'rgba(34, 139, 34, 0.5)'
     elif alex_points == 7:
+        color = 'rgba(0, 100, 0, 0.5)'
+    elif alex_points == 1:
         color = 'rgba(0, 100, 0, 0.2)'
     elif alex_points == 0:
         color = 'rgba(139, 0, 0, 0.3)'
@@ -133,6 +135,8 @@ def style_drafter_live_rows(row):
     elif dave_points == 15:
         color = 'rgba(34, 139, 34, 0.5)'
     elif dave_points == 7:
+        color = 'rgba(0, 100, 0, 0.5)'
+    elif dave_points == 1:
         color = 'rgba(0, 100, 0, 0.2)'
     elif dave_points == 0:
         color = 'rgba(139, 0, 0, 0.3)'
@@ -151,6 +155,8 @@ def style_drafter_live_rows(row):
     elif stu_points == 15:
         color = 'rgba(34, 139, 34, 0.5)'
     elif stu_points == 7:
+        color = 'rgba(0, 100, 0, 0.5)'
+    elif stu_points == 1:
         color = 'rgba(0, 100, 0, 0.2)'
     elif stu_points == 0:
         color = 'rgba(139, 0, 0, 0.3)'
