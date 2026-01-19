@@ -265,7 +265,7 @@ if relevant_files:
         draft_stats = df.groupby('Drafter').agg(
             total_players=('Drafter', 'size'),
             made_cut_count=('make_cut', 'sum'),
-            top25_count=('current_points', lambda x: (x == 7).sum()),
+            top25_count=('current_points', lambda x: (x >= 7).sum()),
             top10_count=('top_10', 'sum'),
             top5_count=('top_5', 'sum'),
             winner_count=('win', 'sum'),
