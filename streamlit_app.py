@@ -43,8 +43,8 @@ elif name_selection == 'Stuart':
 st.divider()
 
 # show tournament info
-st.header("Sony Open")
-st.markdown("Waiʻalae Country Club  \nHonolulu, Hawaii  \nJanuary 15-18, 2026")
+st.header("American Express")
+st.markdown("La Quinta Country Club, PGA West, Nicklaus Course  \nLa Quinta, California  \nJanuary 22-25, 2026")
 # Display an image from a local file
 # st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 st.divider()
@@ -262,7 +262,7 @@ dg_pga_live_predictions_df = dg_pga_live_predictions_df.sort_values('current_sco
 styled_dg_live = dg_pga_live_predictions_df.style.apply(style_live_rows, axis=1)
 
 # Join draft results with live predictions and calculate projected points
-draft_results = pd.read_csv("sony_2026_drafts_results_csv.csv")
+draft_results = pd.read_csv("america_express_drafts_results_csv.csv")
 
 merged_players_live_preds_df = pd.merge(draft_results, dg_pga_live_predictions_df, left_on='Player', right_on='player_first_last', how='left')
 # merged_players_live_preds_df['projected_points'] = (
