@@ -404,7 +404,7 @@ st.dataframe(styled_dg_live, width='stretch', hide_index=True, column_config={
 st.divider()
 
 # adjust path if needed
-draft_results = pd.read_csv("sony_2026_drafts_results_csv.csv")
+draft_results = pd.read_csv("america_express_drafts_results_csv.csv")
 
 # Anchor for: Draft Results
 st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
