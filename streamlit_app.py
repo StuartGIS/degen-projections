@@ -440,14 +440,17 @@ if relevant_files:
             top25_count=('current_points', lambda x: (x >= 7).sum()),
             top10_count=('top_10', 'sum'),
             top5_count=('top_5', 'sum'),
-            winner_count=('win', 'sum'),
             sum_points=('current_points', 'sum'),
         ).reset_index()
-        draft_stats['made_cut_pct'] = draft_stats['made_cut_count'] / draft_stats['total_players'] * 100
+        # Calculate winner_count as 1 if any win > 0 for that drafter in this draft, else 0
+        win_by_drafter = df.groupby('Drafter')['win'].sum().reset_index()
+        win_by_drafter['winner_count'] = (win_by_drafter['win'] > 0).astype(int)
+        draft_stats = pd.merge(draft_stats, win_by_drafter[['Drafter', 'winner_count']], on='Drafter', how='left')
+        draft_stats['made_cut_pct'] = draft_stats['made_cut_count'] / draft_stats['total_players']
         draft_stats['top25_pct'] = draft_stats['top25_count'] / draft_stats['total_players'] * 100
-        draft_stats['top10_pct'] = draft_stats['top10_count'] / draft_stats['total_players'] * 100
-        draft_stats['top5_pct'] = draft_stats['top5_count'] / draft_stats['total_players'] * 100
-        draft_stats['winner_pct'] = (draft_stats['winner_count'] > 0).astype(int) * 100
+        draft_stats['top10_pct'] = draft_stats['top10_count'] / draft_stats['total_players']
+        draft_stats['top5_pct'] = draft_stats['top5_count'] / draft_stats['total_players']
+        draft_stats['winner_pct'] = draft_stats['winner_count'] * 100
         per_draft_pcts.append(draft_stats[['Drafter', 'made_cut_pct', 'top25_pct', 'top10_pct', 'top5_pct', 'winner_pct', 'total_players', 'winner_count', 'sum_points']])
     combined_df = pd.concat(all_data, ignore_index=True)
     # Average the percentages
@@ -476,9 +479,12 @@ if relevant_files:
     avg_stats['Tournaments Played'] = str(total_drafts)
     avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1).map(lambda x: f"{x:.1f}")
     avg_stats['Total Season Points'] = avg_stats['total_season_points'].astype(str)
-    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$0', 'Dave': '$10', 'Stu': '$0'})
+    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$0', 'Dave': '$20', 'Stu': '$0'})
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
     display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Points Wins %', 'Points Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
+    # Add Geography Wins row
+    geography_wins = pd.Series({'Alex': 0, 'Dave': 2, 'Stu': 0})
+    display_stats.loc['Geography Wins'] = geography_wins
     
     def highlight_rank(s):
         parsed = []
