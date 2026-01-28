@@ -505,21 +505,68 @@ if relevant_files:
         ranks = series.sort_values(ascending=False).dropna().unique()
         if len(ranks) == 0:
             return ['' for _ in s]
-        highest = ranks[0]
-        second = ranks[1] if len(ranks) > 1 else highest
-        lowest = ranks[-1]
         styles = []
-        for val in parsed:
-            if pd.isna(val):
-                styles.append('')
-            elif val == highest:
-                styles.append('background-color: darkgreen; color: white')
-            elif val == second:
-                styles.append('background-color: darkgoldenrod; color: white')
-            elif val == lowest:
-                styles.append('background-color: darkred; color: white')
+        highest = ranks[0]
+        # Case 1: all values are the same
+        if len(ranks) == 1:
+            for val in parsed:
+                if pd.isna(val):
+                    styles.append('')
+                else:
+                    styles.append('background-color: darkgreen; color: white')
+        # Case 2: two or three cells tied for highest, one lower
+        elif len(ranks) == 2:
+            count_highest = sum(val == highest for val in parsed if not pd.isna(val))
+            if count_highest >= 2:
+                # Two or three tied for highest, one lower
+                for val in parsed:
+                    if pd.isna(val):
+                        styles.append('')
+                    elif val == highest:
+                        styles.append('background-color: darkgreen; color: white')
+                    else:
+                        styles.append('background-color: darkred; color: white')
             else:
-                styles.append('')
+                # One highest, two tied for second
+                second = ranks[1]
+                for val in parsed:
+                    if pd.isna(val):
+                        styles.append('')
+                    elif val == highest:
+                        styles.append('background-color: darkgreen; color: white')
+                    elif val == second:
+                        styles.append('background-color: darkgoldenrod; color: white')
+                    else:
+                        styles.append('')
+        # Case 3: three unique values
+        elif len(ranks) == 3:
+            highest = ranks[0]
+            second = ranks[1]
+            lowest = ranks[2]
+            for val in parsed:
+                if pd.isna(val):
+                    styles.append('')
+                elif val == highest:
+                    styles.append('background-color: darkgreen; color: white')
+                elif val == second:
+                    styles.append('background-color: darkgoldenrod; color: white')
+                elif val == lowest:
+                    styles.append('background-color: darkred; color: white')
+                else:
+                    styles.append('')
+        else:
+            # More than 3 unique values, fallback: highest darkgreen, lowest darkred, others no color
+            highest = ranks[0]
+            lowest = ranks[-1]
+            for val in parsed:
+                if pd.isna(val):
+                    styles.append('')
+                elif val == highest:
+                    styles.append('background-color: darkgreen; color: white')
+                elif val == lowest:
+                    styles.append('background-color: darkred; color: white')
+                else:
+                    styles.append('')
         return styles
     
     styled_df = display_stats.style.apply(highlight_rank, axis=1)
