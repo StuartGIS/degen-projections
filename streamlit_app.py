@@ -414,7 +414,7 @@ st.dataframe(draft_results, width='stretch', hide_index=True)
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
-st.write("Updated Jan 19, 2026, after Sony Open completion.")
+st.write("Updated Jan 27, 2026, after American Express completion.")
 
 import os
 relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
