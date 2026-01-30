@@ -338,6 +338,14 @@ all_drafter_picks_df_live = pd.concat([all_drafter_picks_df_live, total_row_live
 # Convert Round column to string to handle mixed types
 all_drafter_picks_df_live['Round'] = all_drafter_picks_df_live['Round'].astype(str)
 
+# Sort by Round as integer, keeping 'Total points' last
+def round_sort_key(val):
+    try:
+        return (0, int(val))
+    except ValueError:
+        return (1, float('inf'))  # 'Total points' or any non-integer goes last
+all_drafter_picks_df_live = all_drafter_picks_df_live.sort_values(by='Round', key=lambda col: col.map(round_sort_key)).reset_index(drop=True)
+
 # Rename columns for user-facing display
 all_drafter_picks_df_live = all_drafter_picks_df_live.rename(columns={
     'alex_player': 'Alex',
