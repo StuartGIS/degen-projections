@@ -52,12 +52,15 @@ st.divider()
 
 # --- Table of contents / navigation ---
 st.markdown("### Table of contents")
+
+# Add new section for Drafted Players Season Standings
 toc_sections = [
     ("Drafter Teams Live-Tournament Scoring Summary", "drafter-live"),
     ("Drafted Players Detailed Live-Tournament Scoring", "drafted-live"),
     ("Full Field Detailed Live-Tournament Scoring", "dg-full-field-live"),
     ("Draft Results", "draft-results"),
     ("Season Standings", "season-standings"),
+    ("Drafted Players Season Standings", "drafted-players-season-standings"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
@@ -207,7 +210,11 @@ def reformat_name(name):
         return f"{parts[1]} {parts[0]}"
     return name
 
-dg_pga_live_predictions_df['player_first_last'] = dg_pga_live_predictions_df['player_name'].apply(reformat_name)
+if 'player_name' in dg_pga_live_predictions_df.columns:
+    dg_pga_live_predictions_df['player_first_last'] = dg_pga_live_predictions_df['player_name'].apply(reformat_name)
+elif 'player_first_last' in dg_pga_live_predictions_df.columns:
+    # Optionally reformat if needed, or just keep as is
+    pass
 # dg_pga_live_predictions_df['projected_points'] = (
 #     dg_pga_live_predictions_df['win'] * 25 +
 #     dg_pga_live_predictions_df['top_5'] * 10 +
@@ -725,6 +732,7 @@ st.dataframe(merged_players_pretourney_preds_df.reset_index(drop=True), width='s
 st.divider()
 
 # Anchor for: Datagolf Pre-Tournament Predictions
+# Anchor for: Datagolf Pre-Tournament Predictions
 st.markdown('<a id="dg-pre-tournament"></a>', unsafe_allow_html=True)
 st.subheader("Full Field Detailed Pre-Tournament Projections")
 st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width='stretch', hide_index=True, column_config={
@@ -737,4 +745,62 @@ st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width=
     'projected_points': st.column_config.NumberColumn('Projected Points'),
     'event_name': st.column_config.TextColumn('Event Name')
 })
+
+
+# --- Drafted Players Season Standings ---
+st.divider()
+st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=True)
+st.subheader("Drafted Players Season Standings")
+
+# Load all drafted_points_results CSVs
+csv_files = [
+    "amex_2026_drafted_points_results_csv.csv",
+    "sony_open_drafted_points_results_csv.csv"
+]
+dfs = []
+for f in csv_files:
+    try:
+        df = pd.read_csv(f)
+        dfs.append(df)
+    except Exception as e:
+        st.warning(f"Could not load {f}: {e}")
+
+if dfs:
+    all_drafts = pd.concat(dfs, ignore_index=True)
+    # Normalize column names (handle leading comma in some files)
+    all_drafts.columns = [c.lstrip(',') for c in all_drafts.columns]
+    # Group by player and add Events column
+    player_stats = all_drafts.groupby('player_first_last').agg(
+        Season_Points=('current_points', 'sum'),
+        Events=('player_first_last', 'count'),
+        Alex=('Drafter', lambda x: (x == 'Alex').sum()),
+        Dave=('Drafter', lambda x: (x == 'Dave').sum()),
+        Stu=('Drafter', lambda x: (x == 'Stu').sum())
+    ).reset_index()
+    # Add Amex and Sony current_pos columns
+    amex = pd.read_csv('amex_2026_drafted_points_results_csv.csv')
+    sony = pd.read_csv('sony_open_drafted_points_results_csv.csv')
+    player_stats['Amex'] = player_stats['player_first_last'].map(
+        dict(zip(amex['player_first_last'], amex['current_pos']))
+    )
+    player_stats['Sony'] = player_stats['player_first_last'].map(
+        dict(zip(sony['player_first_last'], sony['current_pos']))
+    )
+    # Sort by Season Points descending
+    player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
+    player_stats.insert(0, 'Pos', player_stats.index + 1)
+
+    st.dataframe(player_stats, hide_index=True, width='stretch', column_config={
+        'Pos': st.column_config.NumberColumn('Pos'),
+        'player_first_last': st.column_config.TextColumn('Player'),
+        'Season_Points': st.column_config.NumberColumn('Season Points'),
+        'Events': st.column_config.NumberColumn('Events'),
+        'Alex': st.column_config.NumberColumn('Alex'),
+        'Dave': st.column_config.NumberColumn('Dave'),
+        'Stu': st.column_config.NumberColumn('Stu'),
+        'Amex': st.column_config.TextColumn('Amex'),
+        'Sony': st.column_config.TextColumn('Sony'),
+    })
+else:
+    st.info("No drafted points results data available.")
 
