@@ -790,7 +790,39 @@ if dfs:
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
     player_stats.insert(0, 'Pos', player_stats.index + 1)
 
-    st.dataframe(player_stats, hide_index=True, width='stretch', column_config={
+    def style_amex_sony(row):
+        def pos_color(val):
+            if pd.isna(val) or val is None or str(val).strip() == '':
+                return ''
+            pos_str = str(val).strip().upper()
+            if pos_str in ('WD', 'CUT', 'MC', ''):
+                return 'background-color: rgba(139, 0, 0, 0.3); color: white'
+            if pos_str.startswith('T'):
+                pos_str = pos_str[1:]
+            try:
+                pos_num = int(pos_str)
+            except:
+                return 'background-color: rgba(139, 0, 0, 0.3); color: white'
+            if pos_num == 1:
+                color = 'rgba(144, 238, 144, 0.5)'
+            elif 2 <= pos_num <= 5:
+                color = 'rgba(50, 205, 50, 0.5)'
+            elif 6 <= pos_num <= 10:
+                color = 'rgba(34, 139, 34, 0.5)'
+            elif 11 <= pos_num <= 25:
+                color = 'rgba(0, 100, 0, 0.5)'
+            else:
+                color = 'rgba(0, 100, 0, 0.2)'
+            return f'background-color: {color}; color: white'
+        styled = [''] * len(row)
+        col_idx = {col: i for i, col in enumerate(row.index)}
+        for col in ['Amex', 'Sony']:
+            if col in col_idx:
+                styled[col_idx[col]] = pos_color(row[col])
+        return styled
+
+    styled_player_stats = player_stats.style.apply(style_amex_sony, axis=1)
+    st.dataframe(styled_player_stats, hide_index=True, width='stretch', column_config={
         'Pos': st.column_config.NumberColumn('Pos'),
         'player_first_last': st.column_config.TextColumn('Player'),
         'Season_Points': st.column_config.NumberColumn('Season Points'),
