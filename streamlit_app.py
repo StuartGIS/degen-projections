@@ -788,7 +788,17 @@ if dfs:
     )
     # Sort by Season Points descending
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
-    player_stats.insert(0, 'Pos', player_stats.index + 1)
+    # Compute ranking with ties (T1, T2, ...)
+    import pandas as pd
+    ranks = player_stats['Season_Points'].rank(method='min', ascending=False).astype(int)
+    counts = ranks.value_counts().sort_index()
+    pos_labels = []
+    for i, r in enumerate(ranks):
+        if counts[r] > 1:
+            pos_labels.append(f'T{r}')
+        else:
+            pos_labels.append(str(r))
+    player_stats.insert(0, 'Pos', pos_labels)
 
     def style_amex_sony(row):
         def pos_color(val):
