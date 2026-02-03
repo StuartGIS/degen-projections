@@ -754,6 +754,7 @@ st.subheader("Drafted Players Season Standings")
 
 # Load all drafted_points_results CSVs
 csv_files = [
+    "Famers_2026_drafted_points_results_csv.csv",
     "Amex_2026_drafted_points_results_csv.csv",
     "Sony_open_drafted_points_results_csv.csv"
 ]
@@ -777,22 +778,33 @@ if dfs:
         Dave=('Drafter', lambda x: (x == 'Dave').sum()),
         Stu=('Drafter', lambda x: (x == 'Stu').sum())
     ).reset_index()
-    # Add Amex and Sony current_pos columns
+    # Add Farmers, Amex, and Sony current_pos columns
+    farmers = pd.read_csv('Famers_2026_drafted_points_results_csv.csv')
     amex = pd.read_csv('Amex_2026_drafted_points_results_csv.csv')
     sony = pd.read_csv('Sony_open_drafted_points_results_csv.csv')
+    player_stats['Farmers'] = player_stats['player_first_last'].map(
+        dict(zip(farmers['player_first_last'], farmers['current_pos']))
+    )
     player_stats['Amex'] = player_stats['player_first_last'].map(
         dict(zip(amex['player_first_last'], amex['current_pos']))
     )
     player_stats['Sony'] = player_stats['player_first_last'].map(
         dict(zip(sony['player_first_last'], sony['current_pos']))
     )
+    # Move Farmers column to left of Amex
+    cols = player_stats.columns.tolist()
+    farmers_idx = cols.index('Farmers')
+    amex_idx = cols.index('Amex')
+    # Remove Farmers and insert before Amex
+    cols.insert(amex_idx, cols.pop(farmers_idx))
+    player_stats = player_stats[cols]
     # Sort by Season Points descending
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
     # Compute ranking with ties: all tied values get same integer (no 'T' prefix)
     ranks = player_stats['Season_Points'].rank(method='min', ascending=False).astype(int)
     player_stats.insert(0, 'Pos', ranks.astype(str).tolist())
 
-    def style_amex_sony(row):
+    def style_tournament_cols(row):
         def pos_color(val):
             if pd.isna(val) or val is None or str(val).strip() == '':
                 return ''
@@ -818,12 +830,12 @@ if dfs:
             return f'background-color: {color}; color: white'
         styled = [''] * len(row)
         col_idx = {col: i for i, col in enumerate(row.index)}
-        for col in ['Amex', 'Sony']:
+        for col in ['Farmers', 'Amex', 'Sony']:
             if col in col_idx:
                 styled[col_idx[col]] = pos_color(row[col])
         return styled
 
-    styled_player_stats = player_stats.style.apply(style_amex_sony, axis=1)
+    styled_player_stats = player_stats.style.apply(style_tournament_cols, axis=1)
     st.dataframe(styled_player_stats, hide_index=True, width='stretch', column_config={
         'Pos': st.column_config.NumberColumn('Pos'),
         'player_first_last': st.column_config.TextColumn('Player'),
@@ -832,6 +844,7 @@ if dfs:
         'Alex': st.column_config.NumberColumn('Alex'),
         'Dave': st.column_config.NumberColumn('Dave'),
         'Stu': st.column_config.NumberColumn('Stu'),
+        'Farmers': st.column_config.TextColumn('Farmers'),
         'Amex': st.column_config.TextColumn('Amex'),
         'Sony': st.column_config.TextColumn('Sony'),
     })
