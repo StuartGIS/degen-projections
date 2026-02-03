@@ -753,16 +753,22 @@ st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=T
 st.subheader("Drafted Players Season Standings")
 
 # Load all drafted_points_results CSVs
-csv_files = [
-    "Famers_2026_drafted_points_results_csv.csv",
-    "Amex_2026_drafted_points_results_csv.csv",
-    "Sony_open_drafted_points_results_csv.csv"
-]
+import re
+# Automatically find all drafted_points_result CSVs and extract tournament names
+csv_files = [f for f in os.listdir('.') if f.endswith('.csv') and 'drafted_points_result' in f]
 dfs = []
+tournament_pos_dicts = {}
+tournament_names = []
 for f in csv_files:
     try:
         df = pd.read_csv(f)
         dfs.append(df)
+        # Extract tournament name (first word before underscore)
+        match = re.match(r"([A-Za-z0-9]+)_.*drafted_points_result.*\.csv", f)
+        if match:
+            tname = match.group(1)
+            tournament_names.append(tname)
+            tournament_pos_dicts[tname] = dict(zip(df['player_first_last'], df['current_pos']))
     except Exception as e:
         st.warning(f"Could not load {f}: {e}")
 
@@ -778,26 +784,18 @@ if dfs:
         Dave=('Drafter', lambda x: (x == 'Dave').sum()),
         Stu=('Drafter', lambda x: (x == 'Stu').sum())
     ).reset_index()
-    # Add Farmers, Amex, and Sony current_pos columns
-    farmers = pd.read_csv('Famers_2026_drafted_points_results_csv.csv')
-    amex = pd.read_csv('Amex_2026_drafted_points_results_csv.csv')
-    sony = pd.read_csv('Sony_open_drafted_points_results_csv.csv')
-    player_stats['Farmers'] = player_stats['player_first_last'].map(
-        dict(zip(farmers['player_first_last'], farmers['current_pos']))
-    )
-    player_stats['Amex'] = player_stats['player_first_last'].map(
-        dict(zip(amex['player_first_last'], amex['current_pos']))
-    )
-    player_stats['Sony'] = player_stats['player_first_last'].map(
-        dict(zip(sony['player_first_last'], sony['current_pos']))
-    )
-    # Move Farmers column to right of Stu and left of Amex
+    # Add tournament columns for each tournament, with finishing position
+    for tname in tournament_names:
+        player_stats[tname] = player_stats['player_first_last'].map(tournament_pos_dicts[tname])
+    # Move all tournament columns to right of 'Stu', most recent first
     cols = player_stats.columns.tolist()
-    farmers_idx = cols.index('Farmers')
+    # Remove tournament columns from current position
+    for tname in tournament_names:
+        cols.remove(tname)
+    # Insert tournament columns after 'Stu', most recent first (reverse order)
     stu_idx = cols.index('Stu')
-    amex_idx = cols.index('Amex')
-    # Remove Farmers and insert after Stu (which is before Amex)
-    cols.insert(stu_idx + 1, cols.pop(farmers_idx))
+    for i, tname in enumerate(reversed(tournament_names)):
+        cols.insert(stu_idx + 1, tname)
     player_stats = player_stats[cols]
     # Sort by Season Points descending
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
@@ -831,13 +829,14 @@ if dfs:
             return f'background-color: {color}; color: white'
         styled = [''] * len(row)
         col_idx = {col: i for i, col in enumerate(row.index)}
-        for col in ['Farmers', 'Amex', 'Sony']:
-            if col in col_idx:
-                styled[col_idx[col]] = pos_color(row[col])
+        # Style all tournament columns
+        for tname in tournament_names:
+            if tname in col_idx:
+                styled[col_idx[tname]] = pos_color(row[tname])
         return styled
 
-    styled_player_stats = player_stats.style.apply(style_tournament_cols, axis=1)
-    st.dataframe(styled_player_stats, hide_index=True, width='stretch', column_config={
+    # Build column_config for all tournament columns
+    column_config = {
         'Pos': st.column_config.NumberColumn('Pos'),
         'player_first_last': st.column_config.TextColumn('Player'),
         'Season_Points': st.column_config.NumberColumn('Season Points'),
@@ -845,10 +844,12 @@ if dfs:
         'Alex': st.column_config.NumberColumn('Alex'),
         'Dave': st.column_config.NumberColumn('Dave'),
         'Stu': st.column_config.NumberColumn('Stu'),
-        'Farmers': st.column_config.TextColumn('Farmers'),
-        'Amex': st.column_config.TextColumn('Amex'),
-        'Sony': st.column_config.TextColumn('Sony'),
-    })
+    }
+    for tname in tournament_names:
+        column_config[tname] = st.column_config.TextColumn(tname)
+
+    styled_player_stats = player_stats.style.apply(style_tournament_cols, axis=1)
+    st.dataframe(styled_player_stats, hide_index=True, width='stretch', column_config=column_config)
 else:
     st.info("No drafted points results data available.")
 
