@@ -754,8 +754,8 @@ st.subheader("Drafted Players Season Standings")
 
 # Load all drafted_points_results CSVs
 csv_files = [
-    "amex_2026_drafted_points_results_csv.csv",
-    "sony_open_drafted_points_results_csv.csv"
+    "Amex_2026_drafted_points_results_csv.csv",
+    "Sony_open_drafted_points_results_csv.csv"
 ]
 dfs = []
 for f in csv_files:
@@ -778,8 +778,8 @@ if dfs:
         Stu=('Drafter', lambda x: (x == 'Stu').sum())
     ).reset_index()
     # Add Amex and Sony current_pos columns
-    amex = pd.read_csv('amex_2026_drafted_points_results_csv.csv')
-    sony = pd.read_csv('sony_open_drafted_points_results_csv.csv')
+    amex = pd.read_csv('Amex_2026_drafted_points_results_csv.csv')
+    sony = pd.read_csv('Sony_open_drafted_points_results_csv.csv')
     player_stats['Amex'] = player_stats['player_first_last'].map(
         dict(zip(amex['player_first_last'], amex['current_pos']))
     )
