@@ -791,12 +791,13 @@ if dfs:
     player_stats['Sony'] = player_stats['player_first_last'].map(
         dict(zip(sony['player_first_last'], sony['current_pos']))
     )
-    # Move Farmers column to left of Amex
+    # Move Farmers column to right of Stu and left of Amex
     cols = player_stats.columns.tolist()
     farmers_idx = cols.index('Farmers')
+    stu_idx = cols.index('Stu')
     amex_idx = cols.index('Amex')
-    # Remove Farmers and insert before Amex
-    cols.insert(amex_idx, cols.pop(farmers_idx))
+    # Remove Farmers and insert after Stu (which is before Amex)
+    cols.insert(stu_idx + 1, cols.pop(farmers_idx))
     player_stats = player_stats[cols]
     # Sort by Season Points descending
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
