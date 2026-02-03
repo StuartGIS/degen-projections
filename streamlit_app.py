@@ -9,38 +9,38 @@ import json
 
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"><h1 style="font-family: \'Lobster\', cursive; color: gold; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">🏌️‍♂️ Degenerates</h1>', unsafe_allow_html=True)
 st.divider()
-st.write(
-    "Select your name and a special message will pop up!"
-)
-name_selection = st.selectbox("Select your name:", ["Choose your name","Alex","Dave","Dante","Jason","Pete","Stuart"])
+# st.write(
+#     "Select your name and a special message will pop up!"
+# )
+# name_selection = st.selectbox("Select your name:", ["Choose your name","Alex","Dave","Dante","Jason","Pete","Stuart"])
 
-if name_selection == 'Alex':
-  st.write(
-    "Alex has wonderful ideas but needs to watch his tone."
-)
-elif name_selection == 'Dave':
-  st.write(
-    "Dave is a just judge who makes fair rulings."
-)
-elif name_selection == 'Dante':
-  st.write(
-    "Dante has shown steady improvement in his game and has a nice baby fade."
-)
-elif name_selection == 'Jason':
-  st.write(
-    "Jason is doing a great job at being a new dad and his wise opinion is always welcome and respected."
-)
-elif name_selection == 'Pete':
-  st.write(
-    "Pete is also crushing the new dad game. We'd like to take his $5 more often though 😜"
-)
-elif name_selection == 'Stuart':
-  st.write(
-    "Stuart cares deeply about ALL of his subjects."
-)
+# if name_selection == 'Alex':
+#   st.write(
+#     "Alex has wonderful ideas but needs to watch his tone."
+# )
+# elif name_selection == 'Dave':
+#   st.write(
+#     "Dave is a just judge who makes fair rulings."
+# )
+# elif name_selection == 'Dante':
+#   st.write(
+#     "Dante has shown steady improvement in his game and has a nice baby fade."
+# )
+# elif name_selection == 'Jason':
+#   st.write(
+#     "Jason is doing a great job at being a new dad and his wise opinion is always welcome and respected."
+# )
+# elif name_selection == 'Pete':
+#   st.write(
+#     "Pete is also crushing the new dad game. We'd like to take his $5 more often though 😜"
+# )
+# elif name_selection == 'Stuart':
+#   st.write(
+#     "Stuart cares deeply about ALL of his subjects."
+# )
 
-# Insert a small table-of-contents menu so users can jump to sections below
-st.divider()
+# # Insert a small table-of-contents menu so users can jump to sections below
+# st.divider()
 
 # show tournament info
 st.header("Farmers Insurance Open")
