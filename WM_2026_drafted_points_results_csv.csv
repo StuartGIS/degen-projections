@@ -1,0 +1,25 @@
+﻿Drafter,Pick,Round,current_pos,player_first_last,current_score,current_points,thru,R1,R2,R3,R4,win,top_5,top_10,make_cut
+Alex,3,1,2,Hideki Matsuyama,-16,25,18,68,64,68,68,0,100,100,100
+Dave,8,3,1,Chris Gotterup,-16,50,18,63,71,70,64,100,100,100,100
+Dave,5,2,T3,Si Woo Kim,-15,25,18,73,62,66,68,0,100,100,100
+Stu,1,1,T3,Scottie Scheffler,-15,25,18,73,65,67,64,0,100,100,100
+Dave,14,5,8,Jake Knapp,-14,15,18,67,69,66,68,0,0,100,100
+Alex,10,4,9,Matt Fitzpatrick,-13,15,18,65,70,67,69,0,0,100,100
+Stu,13,5,T10,Viktor Hovland,-12,15,18,69,70,65,68,0,0,100,100
+Dave,20,7,T10,Pierceson Coody,-12,15,18,66,68,70,68,0,0,100,100
+Stu,7,3,T13,Maverick McNealy,-11,7,18,67,69,65,72,0,0,0,100
+Alex,15,5,T16,Daniel Berger,-10,7,18,67,71,71,65,0,0,0,100
+Stu,12,4,T18,Sahith Theegala,-9,7,18,70,65,70,70,0,0,0,100
+Alex,4,2,T28,Ben Griffin,-7,1,18,71,67,69,70,0,0,0,100
+Dave,17,6,T28,Nick Taylor,-7,1,18,71,68,71,67,0,0,0,100
+Alex,21,7,T28,Min Woo Lee,-7,1,18,71,65,68,73,0,0,0,100
+Stu,6,2,T41,Xander Schauffele,-5,1,18,71,70,73,65,0,0,0,100
+Dave,2,1,T41,Cameron Young,-5,1,18,70,69,69,71,0,0,0,100
+Stu,22,8,T48,Michael Brennan,-4,1,18,70,69,67,74,0,0,0,100
+Dave,23,8,CUT,Joel Dahmen,0,0,0,71,71,,,0,0,0,0
+Stu,19,7,CUT,Matt McCarty,2,0,0,74,70,,,0,0,0,0
+Stu,18,6,CUT,Brooks Koepka,2,0,0,75,69,,,0,0,0,0
+Alex,9,3,CUT,Jordan Spieth,3,0,0,70,75,,,0,0,0,0
+Dave,11,4,CUT,Sam Burns,5,0,0,72,75,,,0,0,0,0
+Alex,16,6,CUT,Andrew Novak,7,0,0,76,73,,,0,0,0,0
+Alex,24,8,CUT,Eric Cole,9,0,0,72,79,,,0,0,0,0
