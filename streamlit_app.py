@@ -429,7 +429,7 @@ st.dataframe(draft_results, width='stretch', hide_index=True)
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
-st.write("Updated Feb 16, 2026, after AT&T completion.")
+st.write("Updated Feb 22, 2026, after Genesis (Riv) completion.")
 
 import os
 relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
@@ -751,7 +751,7 @@ st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width=
 st.divider()
 st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Season Standings")
-st.write("Updated Feb 16, 2026, after AT&T completion.")
+st.write("Updated Feb 22, 2026, after Genesis (Riv) completion.")
 
 # Load all drafted_points_results CSVs
 import re
