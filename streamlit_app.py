@@ -61,6 +61,7 @@ toc_sections = [
     ("Draft Results", "draft-results"),
     ("Season Standings", "season-standings"),
     ("Drafted Players Season Standings", "drafted-players-season-standings"),
+    ("All Players Season Standings", "all-players-season-standings"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
