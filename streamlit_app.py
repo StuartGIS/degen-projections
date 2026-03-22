@@ -854,3 +854,115 @@ if dfs:
 else:
     st.info("No drafted points results data available.")
 
+# --- All Players Season Standings ---
+st.divider()
+st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
+st.subheader("All Players Season Standings")
+st.write("This table includes all players from all tournaments, using full field results. Tournaments are ordered by their 'tourney_num'.")
+
+# Find all full_field_points_results CSVs and extract tourney_num and event_name
+import glob
+full_field_files = [f for f in os.listdir('.') if f.endswith('.csv') and 'full_field_points_results' in f]
+full_field_dfs = []
+tourney_info = []  # (tourney_num, event_name, file)
+tournament_pos_dicts = {}
+for f in full_field_files:
+    try:
+        df = pd.read_csv(f)
+        # Try to get tourney_num and event_name from first row
+        if 'tourney_num' in df.columns and 'event_name' in df.columns:
+            tnum = int(df['tourney_num'].iloc[0])
+            ename = str(df['event_name'].iloc[0])
+        else:
+            tnum = None
+            ename = f
+        tourney_info.append((tnum, ename, f))
+        full_field_dfs.append(df)
+        # Build player:pos dict for this tournament
+        tournament_pos_dicts[ename] = dict(zip(df['player_first_last'], df['current_pos']))
+    except Exception as e:
+        st.warning(f"Could not load {f}: {e}")
+
+if full_field_dfs:
+    # Sort tournaments by tourney_num descending
+    tourney_info = [t for t in tourney_info if t[0] is not None]
+    tourney_info.sort(key=lambda x: -x[0])
+    # Use the text before the first underscore in the filename as the column name
+    tournament_cols = []
+    tournament_name_map = {}  # maps short col name to event_name
+    for tnum, ename, fname in tourney_info:
+        short_col = fname.split('_')[0]
+        tournament_cols.append(short_col)
+        tournament_name_map[short_col] = ename
+    # Concat all data
+    all_full_field = pd.concat(full_field_dfs, ignore_index=True)
+    all_full_field.columns = [c.lstrip(',') for c in all_full_field.columns]
+    # Group by player and add Events column
+    player_stats = all_full_field.groupby('player_first_last').agg(
+        Season_Points=('current_points', 'sum'),
+        Events=('player_first_last', 'count')
+    ).reset_index()
+    # Add tournament columns for each tournament, with finishing position
+    for short_col in tournament_cols:
+        ename = tournament_name_map[short_col]
+        player_stats[short_col] = player_stats['player_first_last'].map(tournament_pos_dicts[ename])
+    # Move tournament columns to right of Events, in order
+    cols = player_stats.columns.tolist()
+    for short_col in tournament_cols:
+        cols.remove(short_col)
+    events_idx = cols.index('Events')
+    for i, short_col in enumerate(tournament_cols):
+        cols.insert(events_idx + 1 + i, short_col)
+    player_stats = player_stats[cols]
+    # Sort by Season Points descending
+    player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
+    # Compute ranking with ties
+    ranks = player_stats['Season_Points'].rank(method='min', ascending=False).astype(int)
+    player_stats.insert(0, 'Pos', ranks.astype(str).tolist())
+
+    def style_tournament_cols(row):
+        def pos_color(val):
+            if pd.isna(val) or val is None or str(val).strip() == '':
+                return ''
+            pos_str = str(val).strip().upper()
+            if pos_str in ('WD', 'CUT', 'MC', ''):
+                return 'background-color: rgba(139, 0, 0, 0.3); color: white'
+            if pos_str.startswith('T'):
+                pos_str = pos_str[1:]
+            try:
+                pos_num = int(pos_str)
+            except:
+                return 'background-color: rgba(139, 0, 0, 0.3); color: white'
+            if pos_num == 1:
+                color = 'rgba(144, 238, 144, 0.5)'
+            elif 2 <= pos_num <= 5:
+                color = 'rgba(50, 205, 50, 0.5)'
+            elif 6 <= pos_num <= 10:
+                color = 'rgba(34, 139, 34, 0.5)'
+            elif 11 <= pos_num <= 25:
+                color = 'rgba(0, 100, 0, 0.5)'
+            else:
+                color = 'rgba(0, 100, 0, 0.2)'
+            return f'background-color: {color}; color: white'
+        styled = [''] * len(row)
+        col_idx = {col: i for i, col in enumerate(row.index)}
+        for short_col in tournament_cols:
+            if short_col in col_idx:
+                styled[col_idx[short_col]] = pos_color(row[short_col])
+        return styled
+
+    # Build column_config for all tournament columns
+    column_config = {
+        'Pos': st.column_config.NumberColumn('Pos'),
+        'player_first_last': st.column_config.TextColumn('Player'),
+        'Season_Points': st.column_config.NumberColumn('Season Points'),
+        'Events': st.column_config.NumberColumn('Events'),
+    }
+    for short_col in tournament_cols:
+        column_config[short_col] = st.column_config.TextColumn(short_col)
+
+    styled_all_players = player_stats.style.apply(style_tournament_cols, axis=1)
+    st.dataframe(styled_all_players, hide_index=True, width='stretch', column_config=column_config)
+else:
+    st.info("No full field points results data available.")
+
