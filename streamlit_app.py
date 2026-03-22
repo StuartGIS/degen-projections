@@ -973,7 +973,7 @@ if full_field_dfs:
     column_config = {
         'Pos': st.column_config.NumberColumn('Pos'),
         'player_first_last': st.column_config.TextColumn('Player'),
-        'Season_Points': st.column_config.NumberColumn('Season Points'),
+        'Season_Points': st.column_config.NumberColumn('Season Points', format='%d'),
         'Events': st.column_config.NumberColumn('Events'),
     }
     for short_col in tournament_cols:
