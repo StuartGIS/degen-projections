@@ -858,7 +858,7 @@ else:
 st.divider()
 st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
-st.write("This table includes all players from all tournaments, using full field results. Tournaments are ordered by their 'tourney_num'.")
+st.write("This table includes all players from all tournaments, using full field results. Updated March 17, 2026, after The Players completion.")
 
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
 import glob
@@ -869,17 +869,17 @@ tournament_pos_dicts = {}
 for f in full_field_files:
     try:
         df = pd.read_csv(f)
-        # Try to get tourney_num and event_name from first row
-        if 'tourney_num' in df.columns and 'event_name' in df.columns:
+        # Try to get tourney_num from first row
+        if 'tourney_num' in df.columns:
             tnum = int(df['tourney_num'].iloc[0])
-            ename = str(df['event_name'].iloc[0])
         else:
             tnum = None
-            ename = f
-        tourney_info.append((tnum, ename, f))
+        # Use the first word before the underscore in the filename as the short column name
+        short_col = f.split('_')[0]
+        tourney_info.append((tnum, short_col, f))
         full_field_dfs.append(df)
-        # Build player:pos dict for this tournament
-        tournament_pos_dicts[ename] = dict(zip(df['player_first_last'], df['current_pos']))
+        # Build player:pos dict for this tournament using short_col as key
+        tournament_pos_dicts[short_col] = dict(zip(df['player_first_last'], df['current_pos']))
     except Exception as e:
         st.warning(f"Could not load {f}: {e}")
 
@@ -889,11 +889,8 @@ if full_field_dfs:
     tourney_info.sort(key=lambda x: -x[0])
     # Use the text before the first underscore in the filename as the column name
     tournament_cols = []
-    tournament_name_map = {}  # maps short col name to event_name
-    for tnum, ename, fname in tourney_info:
-        short_col = fname.split('_')[0]
+    for tnum, short_col, fname in tourney_info:
         tournament_cols.append(short_col)
-        tournament_name_map[short_col] = ename
     # Concat all data
     all_full_field = pd.concat(full_field_dfs, ignore_index=True)
     all_full_field.columns = [c.lstrip(',') for c in all_full_field.columns]
@@ -904,16 +901,31 @@ if full_field_dfs:
     ).reset_index()
     # Add tournament columns for each tournament, with finishing position
     for short_col in tournament_cols:
-        ename = tournament_name_map[short_col]
-        player_stats[short_col] = player_stats['player_first_last'].map(tournament_pos_dicts[ename])
+        player_stats[short_col] = player_stats['player_first_last'].map(tournament_pos_dicts[short_col])
     # Move tournament columns to right of Events, in order
     cols = player_stats.columns.tolist()
-    for short_col in tournament_cols:
-        cols.remove(short_col)
+    # Remove duplicates from tournament_cols while preserving order
+    seen = set()
+    unique_tournament_cols = []
+    for col in tournament_cols:
+        if col not in seen:
+            unique_tournament_cols.append(col)
+            seen.add(col)
+    # Remove tournament columns from current position if present
+    for short_col in unique_tournament_cols:
+        if short_col in cols:
+            cols.remove(short_col)
     events_idx = cols.index('Events')
-    for i, short_col in enumerate(tournament_cols):
+    for i, short_col in enumerate(unique_tournament_cols):
         cols.insert(events_idx + 1 + i, short_col)
-    player_stats = player_stats[cols]
+    # Remove any duplicate columns in the final list
+    final_cols = []
+    seen_final = set()
+    for col in cols:
+        if col not in seen_final:
+            final_cols.append(col)
+            seen_final.add(col)
+    player_stats = player_stats[final_cols]
     # Sort by Season Points descending
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
     # Compute ranking with ties
@@ -948,7 +960,12 @@ if full_field_dfs:
         col_idx = {col: i for i, col in enumerate(row.index)}
         for short_col in tournament_cols:
             if short_col in col_idx:
-                styled[col_idx[short_col]] = pos_color(row[short_col])
+                val = row[short_col]
+                # Only apply pos_color if val is a scalar (not a Series)
+                if not hasattr(val, "__len__") or isinstance(val, str):
+                    styled[col_idx[short_col]] = pos_color(val)
+                else:
+                    styled[col_idx[short_col]] = ''
         return styled
 
     # Build column_config for all tournament columns
