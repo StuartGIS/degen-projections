@@ -1,8 +1,16 @@
-# 🎈 Blank app template
+Before every tournament:
+1. Create a "draft_results" csv file after the draft
+2. Upload that csv to the repository
+3. Use that filename as the filename for the draft_results variable in the code. Should be two replacements.
+4. Update the text tournament description for the course, location, and dates.
 
-A simple Streamlit app template for you to modify!
+After every tournament:
+1. Download a csv of the Drafted Players Detailed Live-Tournament Scoring table
+2. Upload that table to the repo
+3. Download a csv of the Full Field Detailed Live-Tournament Scoring table.
+4. Add a tourney_num column to that table and give it its correct number.
+5. Upload that csv to the repo.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
 
 ### How to run it on your own machine
 
