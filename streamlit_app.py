@@ -895,11 +895,23 @@ if full_field_dfs:
     # Concat all data
     all_full_field = pd.concat(full_field_dfs, ignore_index=True)
     all_full_field.columns = [c.lstrip(',') for c in all_full_field.columns]
-    # Group by player and add Events column
-    player_stats = all_full_field.groupby('player_first_last').agg(
-        Season_Points=('current_points', 'sum'),
-        Events=('player_first_last', 'count')
-    ).reset_index()
+    # Group by player and add Events column (count unique events)
+    if 'event_name' in all_full_field.columns:
+        player_stats = all_full_field.groupby('player_first_last').agg(
+            Season_Points=('current_points', 'sum'),
+            Events=('event_name', 'nunique')
+        ).reset_index()
+    elif 'tourney_num' in all_full_field.columns:
+        player_stats = all_full_field.groupby('player_first_last').agg(
+            Season_Points=('current_points', 'sum'),
+            Events=('tourney_num', 'nunique')
+        ).reset_index()
+    else:
+        # Fallback to row count if no event identifier is present
+        player_stats = all_full_field.groupby('player_first_last').agg(
+            Season_Points=('current_points', 'sum'),
+            Events=('player_first_last', 'count')
+        ).reset_index()
     # Add tournament columns for each tournament, with finishing position
     for short_col in tournament_cols:
         player_stats[short_col] = player_stats['player_first_last'].map(tournament_pos_dicts[short_col])
