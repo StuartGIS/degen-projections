@@ -10,6 +10,7 @@ After every tournament:
 3. Download a csv of the Full Field Detailed Live-Tournament Scoring table.
 4. Add a tourney_num column to that table and give it its correct number.
 5. Upload that csv to the repo.
+6. Update the season standings descriptions x3
 
 
 ### How to run it on your own machine
