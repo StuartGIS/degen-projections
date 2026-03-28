@@ -62,6 +62,7 @@ toc_sections = [
     ("Season Standings", "season-standings"),
     ("Drafted Players Season Standings", "drafted-players-season-standings"),
     ("All Players Season Standings", "all-players-season-standings"),
+    ("Current Event Player Performance Last 16 Rounds", "current-event-player-performance-last16"),
     ("Player Performance Last 16 Rounds", "player-performance-last16"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
@@ -1068,5 +1069,36 @@ if not last16_df.empty:
             'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
         },
     )
+
+# --- Current Event Player Performance Last 16 Rounds ---
+st.divider()
+st.markdown('<a id="current-event-player-performance-last16"></a>', unsafe_allow_html=True)
+st.subheader("Current Event Player Performance Last 16 Rounds")
+st.write("This table shows the last 16 round stats for players in the current event (Full Field Detailed Pre-Tournament Projections table).")
+
+if not last16_df.empty and 'player_first_last' in dg_pga_pre_tournament_predictions_df.columns:
+    # Get set of current event player names (already in First Last format)
+    event_players = set(dg_pga_pre_tournament_predictions_df['player_first_last'].unique())
+    # Filter last16_df to only those players
+    filtered_last16 = last16_df[last16_df['player_name'].isin(event_players)].copy()
+    filtered_last16 = filtered_last16.sort_values('sg_total', ascending=False).reset_index(drop=True)
+    st.dataframe(
+        filtered_last16,
+        width='stretch',
+        hide_index=True,
+        column_config={
+            'player_name': st.column_config.TextColumn('Player'),
+            'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+            'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+            'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+            'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+            'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+            'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+            'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.1f'),
+            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.1f'),
+            'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+        },
+    )
 else:
-    st.info("No last 16 rounds stats available.")
+    st.info("No current event last 16 rounds stats available.")
