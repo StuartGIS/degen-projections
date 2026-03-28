@@ -861,6 +861,7 @@ st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
 st.write("This table includes all players from all tournaments. Updated March 22, 2026, after Valspar completion.")
 
+
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
 import glob
 full_field_files = [f for f in os.listdir('.') if f.endswith('.csv') and 'full_field_points_results' in f]
@@ -996,3 +997,59 @@ if full_field_dfs:
 else:
     st.info("No full field points results data available.")
 
+# --- Player Performance Last 16 Rounds ---
+st.divider()
+st.markdown('<a id="player-performance-last16"></a>', unsafe_allow_html=True)
+st.subheader("Player Performance Last 16 Rounds")
+st.write("Each row shows a player's average stats for their most recent 16 rounds played in 2026.")
+
+
+@st.cache_data(ttl=300)
+def load_last16_stats():
+    url = "https://feeds.datagolf.com/historical-raw-data/rounds?tour=pga&event_id=all&year=2026&file_format=json&key=57b951c096fc3f4eb093c152f5a5"
+    try:
+        data = requests.get(url).json()
+        rows = []
+        for event in data.values():
+            event_id = event['event_id']
+            event_name = event['event_name']
+            for round_num in range(1, 5):
+                for player in event['scores']:
+                    player_name = player['player_name']
+                    round_data = player.get(f'round_{round_num}')
+                    if round_data:
+                        row = {'player_name': player_name, 'event_id': int(event_id), 'event_name': event_name, 'round_num': round_num}
+                        row.update(round_data)
+                        rows.append(row)
+        df = pd.DataFrame(rows)
+        if df.empty:
+            return df
+        df = df.sort_values(['player_name', 'event_id', 'round_num'])
+        def get_last_16(group):
+            return group.tail(16)
+        last16 = df.groupby('player_name', group_keys=False).apply(get_last_16)
+        stats = ['sg_total', 'sg_t2g', 'sg_ott', 'sg_app', 'sg_arg', 'sg_putt', 'gir', 'driving_dist', 'driving_acc', 'score']
+        avg_stats = last16.groupby('player_name')[stats].mean().reset_index()
+        avg_stats = avg_stats.rename(columns={'score': 'round_score'})
+        return avg_stats
+    except Exception as e:
+        st.error(f"Failed to load last 16 rounds stats: {e}")
+        return pd.DataFrame()
+
+last16_df = load_last16_stats()
+if not last16_df.empty:
+    st.dataframe(last16_df, hide_index=True, width='stretch', column_config={
+        'player_name': st.column_config.TextColumn('Player'),
+        'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+        'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+        'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+        'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+        'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+        'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+        'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+        'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.1f'),
+        'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.1f'),
+        'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+    })
+else:
+    st.info("No last 16 rounds stats available.")
