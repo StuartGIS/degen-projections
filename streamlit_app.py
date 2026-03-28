@@ -62,8 +62,8 @@ toc_sections = [
     ("Season Standings", "season-standings"),
     ("Drafted Players Season Standings", "drafted-players-season-standings"),
     ("All Players Season Standings", "all-players-season-standings"),
-    ("Current Event Player Performance Last 16 Rounds", "current-event-player-performance-last16"),
-    ("Player Performance Last 16 Rounds", "player-performance-last16"),
+    ("Current Event Players: Performance Last 16 Rounds", "current-event-player-performance-last16"),
+    ("All Players: Performance Last 16 Rounds", "player-performance-last16"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
@@ -1002,7 +1002,7 @@ else:
 # --- Player Performance Last 16 Rounds ---
 st.divider()
 st.markdown('<a id="player-performance-last16"></a>', unsafe_allow_html=True)
-st.subheader("Player Performance Last 16 Rounds")
+st.subheader("All Players: Performance Last 16 Rounds")
 st.write("Each row shows a player's average stats for their most recent 16 rounds played in 2026. This table updates after every tournament.")
 
 
@@ -1073,7 +1073,7 @@ if not last16_df.empty:
 # --- Current Event Player Performance Last 16 Rounds ---
 st.divider()
 st.markdown('<a id="current-event-player-performance-last16"></a>', unsafe_allow_html=True)
-st.subheader("Current Event Player Performance Last 16 Rounds")
+st.subheader("Current Event Players: Performance Last 16 Rounds")
 st.write("This table shows the last 16 round stats for players in the current event (Full Field Detailed Pre-Tournament Projections table).")
 
 if not last16_df.empty and 'player_first_last' in dg_pga_pre_tournament_predictions_df.columns:
