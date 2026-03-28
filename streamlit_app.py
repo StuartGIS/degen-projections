@@ -62,6 +62,7 @@ toc_sections = [
     ("Season Standings", "season-standings"),
     ("Drafted Players Season Standings", "drafted-players-season-standings"),
     ("All Players Season Standings", "all-players-season-standings"),
+    ("Player Performance Last 16 Rounds", "player-performance-last16"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
@@ -1001,7 +1002,7 @@ else:
 st.divider()
 st.markdown('<a id="player-performance-last16"></a>', unsafe_allow_html=True)
 st.subheader("Player Performance Last 16 Rounds")
-st.write("Each row shows a player's average stats for their most recent 16 rounds played in 2026.")
+st.write("Each row shows a player's average stats for their most recent 16 rounds played in 2026. This table updates after every tournament.")
 
 
 @st.cache_data(ttl=300)
@@ -1036,20 +1037,36 @@ def load_last16_stats():
         st.error(f"Failed to load last 16 rounds stats: {e}")
         return pd.DataFrame()
 
+
+
 last16_df = load_last16_stats()
 if not last16_df.empty:
-    st.dataframe(last16_df, hide_index=True, width='stretch', column_config={
-        'player_name': st.column_config.TextColumn('Player'),
-        'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
-        'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
-        'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
-        'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
-        'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
-        'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
-        'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
-        'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.1f'),
-        'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.1f'),
-        'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
-    })
+    # Sort by SG: Total descending before display
+    last16_df = last16_df.sort_values('sg_total', ascending=False).reset_index(drop=True)
+    # Reformat player_name from 'Last, First' to 'First Last'
+    def reformat_name(name):
+        parts = name.split(', ')
+        if len(parts) == 2:
+            return f"{parts[1]} {parts[0]}"
+        return name
+    last16_df['player_name'] = last16_df['player_name'].apply(reformat_name)
+    st.dataframe(
+        last16_df,
+        width='stretch',
+        hide_index=True,
+        column_config={
+            'player_name': st.column_config.TextColumn('Player'),
+            'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+            'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+            'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+            'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+            'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+            'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+            'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.1f'),
+            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.1f'),
+            'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+        },
+    )
 else:
     st.info("No last 16 rounds stats available.")
