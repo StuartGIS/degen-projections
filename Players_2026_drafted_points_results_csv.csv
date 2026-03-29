@@ -1,25 +1,25 @@
-﻿Drafter,Pick,Round,current_pos,player_first_last,current_score,current_points,thru,R1,R2,R3,R4,win,top_5,top_10,make_cut
-Alex,4,2,1,Cameron Young,-13,50,18,68,67,72,68,100,100,100,100
-Stu,17,6,2,Matt Fitzpatrick,-12,25,18,70,69,69,68,0,100,100,100
-Alex,9,3,3,Xander Schauffele,-11,25,18,69,65,74,69,0,100,100,100
-Dave,5,2,T5,Ludvig Aberg,-9,25,18,69,63,71,76,0,100,100,100
-Alex,16,6,T8,Sepp Straka,-8,15,18,67,70,72,71,0,0,100,100
-Alex,3,1,T8,Tommy Fleetwood,-8,15,18,69,70,73,68,0,0,100,100
-Stu,12,4,T13,Akshay Bhatia,-6,7,18,71,71,70,70,0,0,0,100
-Stu,13,5,T13,Corey Conners,-6,7,18,69,67,72,74,0,0,0,100
-Alex,24,8,T13,Ryo Hisatsune,-6,7,18,71,69,70,72,0,0,0,100
-Dave,20,7,T13,Brooks Koepka,-6,7,18,72,70,69,71,0,0,0,100
-Dave,17,6,T13,Russell Henley,-6,7,18,68,71,71,72,0,0,0,100
-Dave,8,3,T13,Viktor Hovland,-6,7,18,69,70,69,74,0,0,0,100
-Stu,1,1,T22,Scottie Scheffler,-5,7,18,72,73,67,71,0,0,0,100
-Stu,6,2,T27,Hideki Matsuyama,-3,1,18,70,72,76,67,0,0,0,100
-Stu,19,7,T27,Nicolai Hojgaard,-3,1,18,71,74,71,69,0,0,0,100
-Dave,11,4,T32,Min Woo Lee,-2,1,18,72,70,70,74,0,0,0,100
-Dave,23,8,T32,Max Homa,-2,1,18,71,72,70,73,0,0,0,100
-Stu,7,3,T46,Rory McIlroy,0,1,18,74,71,72,71,0,0,0,100
-Alex,10,4,T50,Si Woo Kim,1,1,18,73,72,68,76,0,0,0,100
-Dave,2,1,T56,Adam Scott,2,1,18,72,72,71,75,0,0,0,100
-Dave,14,5,T56,Chris Gotterup,2,1,18,71,73,68,78,0,0,0,100
-Alex,15,5,CUT,Jake Knapp,3,0,0,75,72,,,0,0,0,0
-Alex,21,7,CUT,Aaron Rai,4,0,0,74,74,,,0,0,0,0
-Stu,22,8,CUT,Tom Hoge,9,0,0,73,80,,,0,0,0,0
+﻿Drafter,Pick,Round,current_pos,player_first_last,current_score,current_points,thru,R1,R2,R3,R4,win,top_5,top_10,make_cut,tourney_num
+Alex,4,2,1,Cameron Young,-13,50,18,68,67,72,68,100,100,100,100,10
+Stu,17,6,2,Matt Fitzpatrick,-12,25,18,70,69,69,68,0,100,100,100,10
+Alex,9,3,3,Xander Schauffele,-11,25,18,69,65,74,69,0,100,100,100,10
+Dave,5,2,T5,Ludvig Aberg,-9,25,18,69,63,71,76,0,100,100,100,10
+Alex,16,6,T8,Sepp Straka,-8,15,18,67,70,72,71,0,0,100,100,10
+Alex,3,1,T8,Tommy Fleetwood,-8,15,18,69,70,73,68,0,0,100,100,10
+Stu,12,4,T13,Akshay Bhatia,-6,7,18,71,71,70,70,0,0,0,100,10
+Stu,13,5,T13,Corey Conners,-6,7,18,69,67,72,74,0,0,0,100,10
+Alex,24,8,T13,Ryo Hisatsune,-6,7,18,71,69,70,72,0,0,0,100,10
+Dave,20,7,T13,Brooks Koepka,-6,7,18,72,70,69,71,0,0,0,100,10
+Dave,17,6,T13,Russell Henley,-6,7,18,68,71,71,72,0,0,0,100,10
+Dave,8,3,T13,Viktor Hovland,-6,7,18,69,70,69,74,0,0,0,100,10
+Stu,1,1,T22,Scottie Scheffler,-5,7,18,72,73,67,71,0,0,0,100,10
+Stu,6,2,T27,Hideki Matsuyama,-3,1,18,70,72,76,67,0,0,0,100,10
+Stu,19,7,T27,Nicolai Hojgaard,-3,1,18,71,74,71,69,0,0,0,100,10
+Dave,11,4,T32,Min Woo Lee,-2,1,18,72,70,70,74,0,0,0,100,10
+Dave,23,8,T32,Max Homa,-2,1,18,71,72,70,73,0,0,0,100,10
+Stu,7,3,T46,Rory McIlroy,0,1,18,74,71,72,71,0,0,0,100,10
+Alex,10,4,T50,Si Woo Kim,1,1,18,73,72,68,76,0,0,0,100,10
+Dave,2,1,T56,Adam Scott,2,1,18,72,72,71,75,0,0,0,100,10
+Dave,14,5,T56,Chris Gotterup,2,1,18,71,73,68,78,0,0,0,100,10
+Alex,15,5,CUT,Jake Knapp,3,0,0,75,72,,,0,0,0,0,10
+Alex,21,7,CUT,Aaron Rai,4,0,0,74,74,,,0,0,0,0,10
+Stu,22,8,CUT,Tom Hoge,9,0,0,73,80,,,0,0,0,0,10
