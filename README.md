@@ -5,7 +5,7 @@ Before every tournament:
 4. Update the text tournament description for the course, location, and dates.
 
 After every tournament:
-1. Download a csv of the Drafted Players Detailed Live-Tournament Scoring table
+1. Download a csv of the Drafted Players Detailed Live-Tournament Scoring table, and add a tourney_num column and values
 2. Upload that table to the repo
 3. Download a csv of the Full Field Detailed Live-Tournament Scoring table.
 4. Add a tourney_num column to that table and give it its correct number.

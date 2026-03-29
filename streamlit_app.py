@@ -792,17 +792,28 @@ if dfs:
         Stu=('Drafter', lambda x: (x == 'Stu').sum())
     ).reset_index()
     # Add tournament columns for each tournament, with finishing position
-    for tname in tournament_names:
+    tourney_num_map = {}
+    for f, tname in zip(csv_files, tournament_names):
+        df = pd.read_csv(f)
+        tnum = None
+        if 'tourney_num' in df.columns:
+            try:
+                tnum = int(df['tourney_num'].iloc[0])
+            except Exception:
+                tnum = None
+        tourney_num_map[tname] = tnum if tnum is not None else -1
         player_stats[tname] = player_stats['player_first_last'].map(tournament_pos_dicts[tname])
-    # Move all tournament columns to right of 'Stu', most recent first
+    # Order tournament columns by tourney_num descending (most recent first)
+    sorted_tnames = sorted(tournament_names, key=lambda x: tourney_num_map.get(x, -1), reverse=True)
     cols = player_stats.columns.tolist()
     # Remove tournament columns from current position
     for tname in tournament_names:
-        cols.remove(tname)
-    # Insert tournament columns after 'Stu', most recent first (reverse order)
+        if tname in cols:
+            cols.remove(tname)
+    # Insert tournament columns after 'Stu', most recent first
     stu_idx = cols.index('Stu')
-    for i, tname in enumerate(reversed(tournament_names)):
-        cols.insert(stu_idx + 1, tname)
+    for i, tname in enumerate(sorted_tnames):
+        cols.insert(stu_idx + 1 + i, tname)
     player_stats = player_stats[cols]
     # Sort by Season Points descending
     player_stats = player_stats.sort_values('Season_Points', ascending=False).reset_index(drop=True)
