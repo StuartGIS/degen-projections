@@ -1064,8 +1064,8 @@ if not last16_df.empty:
             'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
             'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
             'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
-            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.1f'),
-            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.1f'),
+            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
+            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
             'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
         },
     )
