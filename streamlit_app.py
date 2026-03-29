@@ -54,6 +54,7 @@ st.divider()
 st.markdown("### Table of contents")
 
 # Add new section for Drafted Players Season Standings
+
 toc_sections = [
     ("Drafter Teams Live-Tournament Scoring Summary", "drafter-live"),
     ("Drafted Players Detailed Live-Tournament Scoring", "drafted-live"),
@@ -62,8 +63,10 @@ toc_sections = [
     ("Season Standings", "season-standings"),
     ("Drafted Players Season Standings", "drafted-players-season-standings"),
     ("All Players Season Standings", "all-players-season-standings"),
-    ("Current Event Players: Performance Last 16 Rounds", "current-event-player-performance-last16"),
     ("All Players: Performance Last 16 Rounds", "player-performance-last16"),
+    ("Current Event Players: Performance Last 16 Rounds", "current-event-player-performance-last16"),
+    ("All Players: Performance 2026", "player-performance-2026"),
+    ("Current Event Players: Performance 2026", "current-event-player-performance-2026"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
@@ -1070,6 +1073,7 @@ if not last16_df.empty:
         },
     )
 
+
 # --- Current Event Player Performance Last 16 Rounds ---
 st.divider()
 st.markdown('<a id="current-event-player-performance-last16"></a>', unsafe_allow_html=True)
@@ -1102,3 +1106,103 @@ if not last16_df.empty and 'player_first_last' in dg_pga_pre_tournament_predicti
     )
 else:
     st.info("No current event last 16 rounds stats available.")
+
+# --- All Players: Performance 2026 ---
+st.divider()
+st.markdown('<a id="player-performance-2026"></a>', unsafe_allow_html=True)
+st.subheader("All Players: Performance 2026")
+st.write("Each row shows a player's average stats for all measured rounds played in 2026. The 'Measured Rounds' column shows the total number of rounds for each player.")
+
+@st.cache_data(ttl=300)
+def load_all_2026_stats():
+    url = "https://feeds.datagolf.com/historical-raw-data/rounds?tour=pga&event_id=all&year=2026&file_format=json&key=57b951c096fc3f4eb093c152f5a5"
+    try:
+        data = requests.get(url).json()
+        rows = []
+        for event in data.values():
+            event_id = event['event_id']
+            event_name = event['event_name']
+            for round_num in range(1, 5):
+                for player in event['scores']:
+                    player_name = player['player_name']
+                    round_data = player.get(f'round_{round_num}')
+                    if round_data:
+                        row = {'player_name': player_name, 'event_id': int(event_id), 'event_name': event_name, 'round_num': round_num}
+                        row.update(round_data)
+                        rows.append(row)
+        df = pd.DataFrame(rows)
+        if df.empty:
+            return df
+        df = df.sort_values(['player_name', 'event_id', 'round_num'])
+        stats = ['sg_total', 'sg_t2g', 'sg_ott', 'sg_app', 'sg_arg', 'sg_putt', 'gir', 'driving_dist', 'driving_acc', 'score']
+        avg_stats = df.groupby('player_name')[stats].mean().reset_index()
+        avg_stats = avg_stats.rename(columns={'score': 'round_score'})
+        avg_stats['Measured Rounds'] = df.groupby('player_name').size().values
+        # Reformat player_name from 'Last, First' to 'First Last'
+        def reformat_name(name):
+            parts = name.split(', ')
+            if len(parts) == 2:
+                return f"{parts[1]} {parts[0]}"
+            return name
+        avg_stats['player_name'] = avg_stats['player_name'].apply(reformat_name)
+        return avg_stats
+    except Exception as e:
+        st.error(f"Failed to load 2026 stats: {e}")
+        return pd.DataFrame()
+
+all2026_df = load_all_2026_stats()
+if not all2026_df.empty:
+    all2026_df = all2026_df.sort_values('sg_total', ascending=False).reset_index(drop=True)
+    st.dataframe(
+        all2026_df,
+        width='stretch',
+        hide_index=True,
+        column_config={
+            'player_name': st.column_config.TextColumn('Player'),
+            'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+            'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+            'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+            'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+            'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+            'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+            'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
+            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
+            'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+            'Measured Rounds': st.column_config.NumberColumn('Measured Rounds', format='%d'),
+        },
+    )
+else:
+    st.info("No 2026 player stats available.")
+
+# --- Current Event Players: Performance 2026 ---
+st.divider()
+st.markdown('<a id="current-event-player-performance-2026"></a>', unsafe_allow_html=True)
+st.subheader("Current Event Players: Performance 2026")
+st.write("This table shows the 2026 stats for players in the current event (Full Field Detailed Pre-Tournament Projections table). The 'Measured Rounds' column shows the total number of rounds for each player.")
+
+if not all2026_df.empty and 'player_first_last' in dg_pga_pre_tournament_predictions_df.columns:
+    event_players = set(dg_pga_pre_tournament_predictions_df['player_first_last'].unique())
+    filtered_2026 = all2026_df[all2026_df['player_name'].isin(event_players)].copy()
+    filtered_2026 = filtered_2026.sort_values('sg_total', ascending=False).reset_index(drop=True)
+    st.dataframe(
+        filtered_2026,
+        width='stretch',
+        hide_index=True,
+        column_config={
+            'player_name': st.column_config.TextColumn('Player'),
+            'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+            'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+            'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+            'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+            'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+            'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+            'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
+            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
+            'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+            'Measured Rounds': st.column_config.NumberColumn('Measured Rounds', format='%d'),
+        },
+    )
+else:
+    st.info("No current event 2026 stats available.")
