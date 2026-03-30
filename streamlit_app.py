@@ -875,7 +875,7 @@ else:
 st.divider()
 st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
-st.write("This table includes all players from all tournaments. Updated March 22, 2026, after Valspar completion.")
+st.write("This table includes all players from all tournaments. Updated March 30, 2026, after Houston completion.")
 
 
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
