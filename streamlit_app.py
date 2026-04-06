@@ -871,12 +871,12 @@ if dfs:
 else:
     st.info("No drafted points results data available.")
 
+
 # --- All Players Season Standings ---
 st.divider()
 st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
 st.write("This table includes all players from all tournaments. Updated April 5, 2026, after Valero completion.")
-
 
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
 import glob
@@ -1013,6 +1013,45 @@ if full_field_dfs:
 else:
     st.info("No full field points results data available.")
 
+
+# --- Round Leads Table (Moved to Bottom) ---
+
+
+st.markdown('<a id="round-leads"></a>', unsafe_allow_html=True)
+st.subheader("Round Leads")
+st.write("This table shows, for all players in any tournament, how many times they held or shared the lead at the end of each round (R1-R4) for the entire season. A lead is defined as the lowest or tied-lowest score for that round in any event.")
+
+import collections
+if 'full_field_dfs' in globals() and full_field_dfs:
+    # Aggregate all round leads
+    lead_counts = collections.defaultdict(lambda: [0, 0, 0, 0])  # player: [R1, R2, R3, R4]
+    for df in full_field_dfs:
+        for i, round_col in enumerate(['R1', 'R2', 'R3', 'R4']):
+            if round_col in df.columns:
+                # Find the minimum score for this round (ignore NaN)
+                min_score = pd.to_numeric(df[round_col], errors='coerce').min()
+                if pd.isna(min_score):
+                    continue
+                # Find all players with this score
+                leaders = df.loc[pd.to_numeric(df[round_col], errors='coerce') == min_score, 'player_first_last']
+                for player in leaders:
+                    lead_counts[player][i] += 1
+    # Build DataFrame
+    round_leads_df = pd.DataFrame([
+        {'Player': player, 'Rnd 1 Lead': counts[0], 'Rnd 2 Lead': counts[1], 'Rnd 3 Lead': counts[2], 'Rnd 4 Lead': counts[3]}
+        for player, counts in lead_counts.items()
+    ])
+    # Sort by Rnd 4 Lead descending, then Rnd 3, 2, 1
+    round_leads_df = round_leads_df.sort_values(['Rnd 4 Lead', 'Rnd 3 Lead', 'Rnd 2 Lead', 'Rnd 1 Lead'], ascending=False).reset_index(drop=True)
+    st.dataframe(round_leads_df, hide_index=True, width='stretch', column_config={
+        'Player': st.column_config.TextColumn('Player'),
+        'Rnd 1 Lead': st.column_config.NumberColumn('Rnd 1 Lead'),
+        'Rnd 2 Lead': st.column_config.NumberColumn('Rnd 2 Lead'),
+        'Rnd 3 Lead': st.column_config.NumberColumn('Rnd 3 Lead'),
+        'Rnd 4 Lead': st.column_config.NumberColumn('Rnd 4 Lead'),
+    })
+else:
+    st.info("No full field points results data available for round leads.")
 # --- Player Performance Last 16 Rounds ---
 st.divider()
 st.markdown('<a id="player-performance-last16"></a>', unsafe_allow_html=True)
