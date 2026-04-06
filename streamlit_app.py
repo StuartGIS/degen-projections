@@ -435,7 +435,7 @@ st.dataframe(draft_results, width='stretch', hide_index=True)
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
-st.write("Updated March 22, 2026, after Valspar completion.")
+st.write("Updated April 5, 2026, after Valero completion.")
 
 import os
 relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
@@ -757,7 +757,7 @@ st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width=
 st.divider()
 st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Season Standings")
-st.write("Updated March 22, 2026, after Valspar completion.")
+st.write("Updated April 5, 2026, after Valero completion.")
 
 # Load all drafted_points_results CSVs
 import re
@@ -875,7 +875,7 @@ else:
 st.divider()
 st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
-st.write("This table includes all players from all tournaments. Updated March 30, 2026, after Houston completion.")
+st.write("This table includes all players from all tournaments. Updated April 5, 2026, after Valero completion.")
 
 
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
