@@ -70,7 +70,8 @@ toc_sections = [
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
-    ("Full Field Detailed Pre-Tournament Projections", "dg-pre-tournament")
+    ("Full Field Detailed Pre-Tournament Projections", "dg-pre-tournament"),
+    ("Round Leads", "round-leads")
 ]
 
 for title, aid in toc_sections:
