@@ -63,15 +63,15 @@ toc_sections = [
     ("Season Standings", "season-standings"),
     ("Drafted Players Season Standings", "drafted-players-season-standings"),
     ("All Players Season Standings", "all-players-season-standings"),
-    ("All Players: Performance Last 16 Rounds", "player-performance-last16"),
-    ("Current Event Players: Performance Last 16 Rounds", "current-event-player-performance-last16"),
+    # ("All Players: Performance Last 16 Rounds", "player-performance-last16"),
+    # ("Current Event Players: Performance Last 16 Rounds", "current-event-player-performance-last16"),
     ("All Players: Performance 2026", "player-performance-2026"),
     ("Current Event Players: Performance 2026", "current-event-player-performance-2026"),
     ("2026 Points System", "points-2026"),
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
     ("Full Field Detailed Pre-Tournament Projections", "dg-pre-tournament"),
-    ("Round Leads", "round-leads")
+    # ("Round Leads", "round-leads")
 ]
 
 for title, aid in toc_sections:
@@ -1018,145 +1018,145 @@ else:
 # --- Round Leads Table (Moved to Bottom) ---
 
 
-st.markdown('<a id="round-leads"></a>', unsafe_allow_html=True)
-st.subheader("Round Leads")
-st.write("This table shows, for all players in any tournament, how many times they held or shared the lead at the end of each round (R1-R4) for the entire season. A lead is defined as the lowest or tied-lowest score for that round in any event.")
+# st.markdown('<a id="round-leads"></a>', unsafe_allow_html=True)
+# st.subheader("Round Leads")
+# st.write("This table shows, for all players in any tournament, how many times they held or shared the lead at the end of each round (R1-R4) for the entire season. A lead is defined as the lowest or tied-lowest score for that round in any event.")
 
-import collections
-if 'full_field_dfs' in globals() and full_field_dfs:
-    # Aggregate all round leads
-    lead_counts = collections.defaultdict(lambda: [0, 0, 0, 0])  # player: [R1, R2, R3, R4]
-    for df in full_field_dfs:
-        for i, round_col in enumerate(['R1', 'R2', 'R3', 'R4']):
-            if round_col in df.columns:
-                # Find the minimum score for this round (ignore NaN)
-                min_score = pd.to_numeric(df[round_col], errors='coerce').min()
-                if pd.isna(min_score):
-                    continue
-                # Find all players with this score
-                leaders = df.loc[pd.to_numeric(df[round_col], errors='coerce') == min_score, 'player_first_last']
-                for player in leaders:
-                    lead_counts[player][i] += 1
-    # Build DataFrame
-    round_leads_df = pd.DataFrame([
-        {'Player': player, 'Rnd 1 Lead': counts[0], 'Rnd 2 Lead': counts[1], 'Rnd 3 Lead': counts[2], 'Rnd 4 Lead': counts[3]}
-        for player, counts in lead_counts.items()
-    ])
-    # Sort by Rnd 4 Lead descending, then Rnd 3, 2, 1
-    round_leads_df = round_leads_df.sort_values(['Rnd 4 Lead', 'Rnd 3 Lead', 'Rnd 2 Lead', 'Rnd 1 Lead'], ascending=False).reset_index(drop=True)
-    st.dataframe(round_leads_df, hide_index=True, width='stretch', column_config={
-        'Player': st.column_config.TextColumn('Player'),
-        'Rnd 1 Lead': st.column_config.NumberColumn('Rnd 1 Lead'),
-        'Rnd 2 Lead': st.column_config.NumberColumn('Rnd 2 Lead'),
-        'Rnd 3 Lead': st.column_config.NumberColumn('Rnd 3 Lead'),
-        'Rnd 4 Lead': st.column_config.NumberColumn('Rnd 4 Lead'),
-    })
-else:
-    st.info("No full field points results data available for round leads.")
-# --- Player Performance Last 16 Rounds ---
-st.divider()
-st.markdown('<a id="player-performance-last16"></a>', unsafe_allow_html=True)
-st.subheader("All Players: Performance Last 16 Rounds")
-st.write("Each row shows a player's average stats for their most recent 16 rounds played in 2026. This table updates after every tournament.")
-
-
-@st.cache_data(ttl=300)
-def load_last16_stats():
-    url = "https://feeds.datagolf.com/historical-raw-data/rounds?tour=pga&event_id=all&year=2026&file_format=json&key=57b951c096fc3f4eb093c152f5a5"
-    try:
-        data = requests.get(url).json()
-        rows = []
-        for event in data.values():
-            event_id = event['event_id']
-            event_name = event['event_name']
-            for round_num in range(1, 5):
-                for player in event['scores']:
-                    player_name = player['player_name']
-                    round_data = player.get(f'round_{round_num}')
-                    if round_data:
-                        row = {'player_name': player_name, 'event_id': int(event_id), 'event_name': event_name, 'round_num': round_num}
-                        row.update(round_data)
-                        rows.append(row)
-        df = pd.DataFrame(rows)
-        if df.empty:
-            return df
-        df = df.sort_values(['player_name', 'event_id', 'round_num'])
-        def get_last_16(group):
-            return group.tail(16)
-        last16 = df.groupby('player_name', group_keys=False).apply(get_last_16)
-        stats = ['sg_total', 'sg_t2g', 'sg_ott', 'sg_app', 'sg_arg', 'sg_putt', 'gir', 'driving_dist', 'driving_acc', 'score']
-        avg_stats = last16.groupby('player_name')[stats].mean().reset_index()
-        avg_stats = avg_stats.rename(columns={'score': 'round_score'})
-        return avg_stats
-    except Exception as e:
-        st.error(f"Failed to load last 16 rounds stats: {e}")
-        return pd.DataFrame()
+# import collections
+# if 'full_field_dfs' in globals() and full_field_dfs:
+#     # Aggregate all round leads
+#     lead_counts = collections.defaultdict(lambda: [0, 0, 0, 0])  # player: [R1, R2, R3, R4]
+#     for df in full_field_dfs:
+#         for i, round_col in enumerate(['R1', 'R2', 'R3', 'R4']):
+#             if round_col in df.columns:
+#                 # Find the minimum score for this round (ignore NaN)
+#                 min_score = pd.to_numeric(df[round_col], errors='coerce').min()
+#                 if pd.isna(min_score):
+#                     continue
+#                 # Find all players with this score
+#                 leaders = df.loc[pd.to_numeric(df[round_col], errors='coerce') == min_score, 'player_first_last']
+#                 for player in leaders:
+#                     lead_counts[player][i] += 1
+#     # Build DataFrame
+#     round_leads_df = pd.DataFrame([
+#         {'Player': player, 'Rnd 1 Lead': counts[0], 'Rnd 2 Lead': counts[1], 'Rnd 3 Lead': counts[2], 'Rnd 4 Lead': counts[3]}
+#         for player, counts in lead_counts.items()
+#     ])
+#     # Sort by Rnd 4 Lead descending, then Rnd 3, 2, 1
+#     round_leads_df = round_leads_df.sort_values(['Rnd 4 Lead', 'Rnd 3 Lead', 'Rnd 2 Lead', 'Rnd 1 Lead'], ascending=False).reset_index(drop=True)
+#     st.dataframe(round_leads_df, hide_index=True, width='stretch', column_config={
+#         'Player': st.column_config.TextColumn('Player'),
+#         'Rnd 1 Lead': st.column_config.NumberColumn('Rnd 1 Lead'),
+#         'Rnd 2 Lead': st.column_config.NumberColumn('Rnd 2 Lead'),
+#         'Rnd 3 Lead': st.column_config.NumberColumn('Rnd 3 Lead'),
+#         'Rnd 4 Lead': st.column_config.NumberColumn('Rnd 4 Lead'),
+#     })
+# else:
+#     st.info("No full field points results data available for round leads.")
+# # --- Player Performance Last 16 Rounds ---
+# st.divider()
+# st.markdown('<a id="player-performance-last16"></a>', unsafe_allow_html=True)
+# st.subheader("All Players: Performance Last 16 Rounds")
+# st.write("Each row shows a player's average stats for their most recent 16 rounds played in 2026. This table updates after every tournament.")
 
 
+# @st.cache_data(ttl=300)
+# def load_last16_stats():
+#     url = "https://feeds.datagolf.com/historical-raw-data/rounds?tour=pga&event_id=all&year=2026&file_format=json&key=57b951c096fc3f4eb093c152f5a5"
+#     try:
+#         data = requests.get(url).json()
+#         rows = []
+#         for event in data.values():
+#             event_id = event['event_id']
+#             event_name = event['event_name']
+#             for round_num in range(1, 5):
+#                 for player in event['scores']:
+#                     player_name = player['player_name']
+#                     round_data = player.get(f'round_{round_num}')
+#                     if round_data:
+#                         row = {'player_name': player_name, 'event_id': int(event_id), 'event_name': event_name, 'round_num': round_num}
+#                         row.update(round_data)
+#                         rows.append(row)
+#         df = pd.DataFrame(rows)
+#         if df.empty:
+#             return df
+#         df = df.sort_values(['player_name', 'event_id', 'round_num'])
+#         def get_last_16(group):
+#             return group.tail(16)
+#         last16 = df.groupby('player_name', group_keys=False).apply(get_last_16)
+#         stats = ['sg_total', 'sg_t2g', 'sg_ott', 'sg_app', 'sg_arg', 'sg_putt', 'gir', 'driving_dist', 'driving_acc', 'score']
+#         avg_stats = last16.groupby('player_name')[stats].mean().reset_index()
+#         avg_stats = avg_stats.rename(columns={'score': 'round_score'})
+#         return avg_stats
+#     except Exception as e:
+#         st.error(f"Failed to load last 16 rounds stats: {e}")
+#         return pd.DataFrame()
 
-last16_df = load_last16_stats()
-if not last16_df.empty:
-    # Sort by SG: Total descending before display
-    last16_df = last16_df.sort_values('sg_total', ascending=False).reset_index(drop=True)
-    # Reformat player_name from 'Last, First' to 'First Last'
-    def reformat_name(name):
-        parts = name.split(', ')
-        if len(parts) == 2:
-            return f"{parts[1]} {parts[0]}"
-        return name
-    last16_df['player_name'] = last16_df['player_name'].apply(reformat_name)
-    st.dataframe(
-        last16_df,
-        width='stretch',
-        hide_index=True,
-        column_config={
-            'player_name': st.column_config.TextColumn('Player'),
-            'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
-            'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
-            'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
-            'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
-            'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
-            'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
-            'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
-            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
-            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
-            'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
-        },
-    )
 
 
-# --- Current Event Player Performance Last 16 Rounds ---
-st.divider()
-st.markdown('<a id="current-event-player-performance-last16"></a>', unsafe_allow_html=True)
-st.subheader("Current Event Players: Performance Last 16 Rounds")
-st.write("This table shows the last 16 round stats for players in the current event (Full Field Detailed Pre-Tournament Projections table).")
+# last16_df = load_last16_stats()
+# if not last16_df.empty:
+#     # Sort by SG: Total descending before display
+#     last16_df = last16_df.sort_values('sg_total', ascending=False).reset_index(drop=True)
+#     # Reformat player_name from 'Last, First' to 'First Last'
+#     def reformat_name(name):
+#         parts = name.split(', ')
+#         if len(parts) == 2:
+#             return f"{parts[1]} {parts[0]}"
+#         return name
+#     last16_df['player_name'] = last16_df['player_name'].apply(reformat_name)
+#     st.dataframe(
+#         last16_df,
+#         width='stretch',
+#         hide_index=True,
+#         column_config={
+#             'player_name': st.column_config.TextColumn('Player'),
+#             'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+#             'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+#             'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+#             'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+#             'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+#             'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+#             'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+#             'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
+#             'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
+#             'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+#         },
+#     )
 
-if not last16_df.empty and 'player_first_last' in dg_pga_pre_tournament_predictions_df.columns:
-    # Get set of current event player names (already in First Last format)
-    event_players = set(dg_pga_pre_tournament_predictions_df['player_first_last'].unique())
-    # Filter last16_df to only those players
-    filtered_last16 = last16_df[last16_df['player_name'].isin(event_players)].copy()
-    filtered_last16 = filtered_last16.sort_values('sg_total', ascending=False).reset_index(drop=True)
-    st.dataframe(
-        filtered_last16,
-        width='stretch',
-        hide_index=True,
-        column_config={
-            'player_name': st.column_config.TextColumn('Player'),
-            'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
-            'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
-            'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
-            'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
-            'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
-            'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
-            'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
-            'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
-            'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
-            'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
-        },
-    )
-else:
-    st.info("No current event last 16 rounds stats available.")
+
+# # --- Current Event Player Performance Last 16 Rounds ---
+# st.divider()
+# st.markdown('<a id="current-event-player-performance-last16"></a>', unsafe_allow_html=True)
+# st.subheader("Current Event Players: Performance Last 16 Rounds")
+# st.write("This table shows the last 16 round stats for players in the current event (Full Field Detailed Pre-Tournament Projections table).")
+
+# if not last16_df.empty and 'player_first_last' in dg_pga_pre_tournament_predictions_df.columns:
+#     # Get set of current event player names (already in First Last format)
+#     event_players = set(dg_pga_pre_tournament_predictions_df['player_first_last'].unique())
+#     # Filter last16_df to only those players
+#     filtered_last16 = last16_df[last16_df['player_name'].isin(event_players)].copy()
+#     filtered_last16 = filtered_last16.sort_values('sg_total', ascending=False).reset_index(drop=True)
+#     st.dataframe(
+#         filtered_last16,
+#         width='stretch',
+#         hide_index=True,
+#         column_config={
+#             'player_name': st.column_config.TextColumn('Player'),
+#             'sg_total': st.column_config.NumberColumn('SG: Total', format='%.2f'),
+#             'sg_t2g': st.column_config.NumberColumn('SG: Tee to Green', format='%.2f'),
+#             'sg_ott': st.column_config.NumberColumn('SG: Off the Tee', format='%.2f'),
+#             'sg_app': st.column_config.NumberColumn('SG: Approach', format='%.2f'),
+#             'sg_arg': st.column_config.NumberColumn('SG: Around Green', format='%.2f'),
+#             'sg_putt': st.column_config.NumberColumn('SG: Putting', format='%.2f'),
+#             'gir': st.column_config.NumberColumn('GIR', format='%.2f'),
+#             'driving_dist': st.column_config.NumberColumn('Driving Dist', format='%.2f'),
+#             'driving_acc': st.column_config.NumberColumn('Driving Acc', format='%.2f'),
+#             'round_score': st.column_config.NumberColumn('Score', format='%.2f'),
+#         },
+#     )
+# else:
+#     st.info("No current event last 16 rounds stats available.")
 
 # --- All Players: Performance 2026 ---
 st.divider()
