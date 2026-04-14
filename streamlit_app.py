@@ -1264,7 +1264,7 @@ else:
 st.divider()
 st.markdown('<a id="drafters-points-gained-per-round"></a>', unsafe_allow_html=True)
 st.subheader("Drafters Points Gained Per Round")
-st.write("Each value is calculated as drafter average points minus the season average points per drafter for that round. For example, if a drafter's Draft Round 2 value is 1.7, that means per tournament, the golfer they draft in Round 2 has scored an average of 1.7 more points than the other drafter's golfers.")
+st.write("Each value is calculated as drafter average points minus the season average points per drafter for that round. For example, if a drafter's Draft Round 2 value is +1.7, that means per tournament, the golfer they draft in Round 2 has scored an average of 1.7 more points than the other drafters' golfers in Round 2.")
 
 round_gain_files = [f for f in os.listdir('.') if f.endswith('.csv') and 'drafted_points_result' in f]
 round_gain_dfs = []
@@ -1311,42 +1311,23 @@ if round_gain_dfs:
         total_row[['Alex', 'Dave', 'Stu']] = total_row[['Alex', 'Dave', 'Stu']].round(1)
         deltas_df = pd.concat([deltas_df, total_row], ignore_index=True)
 
-        def style_round_gain_rank(row):
+        def style_round_gain_threshold(row):
             styles = [''] * len(row)
-            vals = pd.to_numeric(pd.Series([row['Alex'], row['Dave'], row['Stu']]), errors='coerce')
-            ranks = vals.sort_values(ascending=False).dropna().unique()
-            if len(ranks) == 0:
-                return styles
-            if len(ranks) == 1:
-                for i in [1, 2, 3]:
-                    styles[i] = 'background-color: darkgreen; color: white'
-                return styles
-            if len(ranks) == 2:
-                highest = ranks[0]
-                count_highest = (vals == highest).sum()
-                for i, val in zip([1, 2, 3], vals):
-                    if pd.isna(val):
-                        styles[i] = ''
-                    elif val == highest:
-                        styles[i] = 'background-color: darkgreen; color: white'
-                    elif count_highest >= 2:
-                        styles[i] = 'background-color: darkred; color: white'
-                    else:
-                        styles[i] = 'background-color: darkgoldenrod; color: white'
-                return styles
-            highest, second, lowest = ranks[0], ranks[1], ranks[2]
-            for i, val in zip([1, 2, 3], vals):
+            for idx, col in [(1, 'Alex'), (2, 'Dave'), (3, 'Stu')]:
+                val = pd.to_numeric(row[col], errors='coerce')
                 if pd.isna(val):
-                    styles[i] = ''
-                elif val == highest:
-                    styles[i] = 'background-color: darkgreen; color: white'
-                elif val == second:
-                    styles[i] = 'background-color: darkgoldenrod; color: white'
-                elif val == lowest:
-                    styles[i] = 'background-color: darkred; color: white'
+                    styles[idx] = ''
+                elif val <= -2:
+                    styles[idx] = 'background-color: rgba(255, 22, 12, 0.6); color: white'
+                elif -2 < val < 0:
+                    styles[idx] = 'background-color: rgba(139, 0, 0, 0.6); color: white'
+                elif 0 <= val < 2:
+                    styles[idx] = 'background-color: rgba(0, 100, 0, 0.6); color: white'
+                else:
+                    styles[idx] = 'background-color: rgba(144, 238, 144, 0.6); color: white'
             return styles
 
-        styled_deltas_df = deltas_df.style.apply(style_round_gain_rank, axis=1).format({
+        styled_deltas_df = deltas_df.style.apply(style_round_gain_threshold, axis=1).format({
             'Alex': lambda v: f'+{v:.1f}' if pd.notna(v) and v > 0 else (f'{v:.1f}' if pd.notna(v) else ''),
             'Dave': lambda v: f'+{v:.1f}' if pd.notna(v) and v > 0 else (f'{v:.1f}' if pd.notna(v) else ''),
             'Stu': lambda v: f'+{v:.1f}' if pd.notna(v) and v > 0 else (f'{v:.1f}' if pd.notna(v) else ''),
