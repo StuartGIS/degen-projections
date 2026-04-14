@@ -71,6 +71,7 @@ toc_sections = [
     ("Drafter Teams Pre-Tournament Projections Summary", "drafter-pre"),
     ("Drafted Players Detailed Pre-Tournament Projections", "drafted-pre"),
     ("Full Field Detailed Pre-Tournament Projections", "dg-pre-tournament"),
+    ("Drafters Points Gained Per Round", "drafters-points-gained-per-round"),
     # ("Round Leads", "round-leads")
 ]
 
@@ -1257,3 +1258,112 @@ if not all2026_df.empty and 'player_first_last' in dg_pga_pre_tournament_predict
     )
 else:
     st.info("No current event 2026 stats available.")
+
+
+# --- Drafters Points Gained Per Round ---
+st.divider()
+st.markdown('<a id="drafters-points-gained-per-round"></a>', unsafe_allow_html=True)
+st.subheader("Drafters Points Gained Per Round")
+st.write("Each value is calculated as drafter average points minus the season average points per drafter for that round. For example, if a drafter's Draft Round 2 value is 1.7, that means per tournament, the golfer they draft in Round 2 has scored an average of 1.7 more points than the other drafter's golfers.")
+
+round_gain_files = [f for f in os.listdir('.') if f.endswith('.csv') and 'drafted_points_result' in f]
+round_gain_dfs = []
+for f in round_gain_files:
+    try:
+        df = pd.read_csv(f)
+        df.columns = [c.lstrip(',') for c in df.columns]
+        required_cols = {'Drafter', 'Round', 'current_points'}
+        if required_cols.issubset(df.columns):
+            trimmed = df[['Drafter', 'Round', 'current_points']].copy()
+            trimmed['Round'] = pd.to_numeric(trimmed['Round'], errors='coerce')
+            trimmed['current_points'] = pd.to_numeric(trimmed['current_points'], errors='coerce')
+            round_gain_dfs.append(trimmed)
+    except Exception as e:
+        st.warning(f"Could not load {f}: {e}")
+
+if round_gain_dfs:
+    round_gain_data = pd.concat(round_gain_dfs, ignore_index=True)
+    round_gain_data = round_gain_data[round_gain_data['Drafter'].isin(['Alex', 'Dave', 'Stu'])]
+    round_gain_data = round_gain_data.dropna(subset=['Round', 'current_points'])
+    round_gain_data['Round'] = round_gain_data['Round'].astype(int)
+    round_gain_data = round_gain_data[round_gain_data['Round'].between(1, 8)]
+
+    if not round_gain_data.empty:
+        season_round_avg = round_gain_data.groupby('Round')['current_points'].mean()
+
+        deltas_df = pd.DataFrame({'Draft Round': list(range(1, 9))})
+        for drafter in ['Alex', 'Dave', 'Stu']:
+            drafter_round_avg = (
+                round_gain_data[round_gain_data['Drafter'] == drafter]
+                .groupby('Round')['current_points']
+                .mean()
+            )
+            deltas_df[drafter] = deltas_df['Draft Round'].map(drafter_round_avg - season_round_avg)
+
+        deltas_df[['Alex', 'Dave', 'Stu']] = deltas_df[['Alex', 'Dave', 'Stu']].round(1)
+
+        total_row = pd.DataFrame({
+            'Draft Round': ['Total'],
+            'Alex': [deltas_df['Alex'].sum()],
+            'Dave': [deltas_df['Dave'].sum()],
+            'Stu': [deltas_df['Stu'].sum()],
+        })
+        total_row[['Alex', 'Dave', 'Stu']] = total_row[['Alex', 'Dave', 'Stu']].round(1)
+        deltas_df = pd.concat([deltas_df, total_row], ignore_index=True)
+
+        def style_round_gain_rank(row):
+            styles = [''] * len(row)
+            vals = pd.to_numeric(pd.Series([row['Alex'], row['Dave'], row['Stu']]), errors='coerce')
+            ranks = vals.sort_values(ascending=False).dropna().unique()
+            if len(ranks) == 0:
+                return styles
+            if len(ranks) == 1:
+                for i in [1, 2, 3]:
+                    styles[i] = 'background-color: darkgreen; color: white'
+                return styles
+            if len(ranks) == 2:
+                highest = ranks[0]
+                count_highest = (vals == highest).sum()
+                for i, val in zip([1, 2, 3], vals):
+                    if pd.isna(val):
+                        styles[i] = ''
+                    elif val == highest:
+                        styles[i] = 'background-color: darkgreen; color: white'
+                    elif count_highest >= 2:
+                        styles[i] = 'background-color: darkred; color: white'
+                    else:
+                        styles[i] = 'background-color: darkgoldenrod; color: white'
+                return styles
+            highest, second, lowest = ranks[0], ranks[1], ranks[2]
+            for i, val in zip([1, 2, 3], vals):
+                if pd.isna(val):
+                    styles[i] = ''
+                elif val == highest:
+                    styles[i] = 'background-color: darkgreen; color: white'
+                elif val == second:
+                    styles[i] = 'background-color: darkgoldenrod; color: white'
+                elif val == lowest:
+                    styles[i] = 'background-color: darkred; color: white'
+            return styles
+
+        styled_deltas_df = deltas_df.style.apply(style_round_gain_rank, axis=1).format({
+            'Alex': lambda v: f'+{v:.1f}' if pd.notna(v) and v > 0 else (f'{v:.1f}' if pd.notna(v) else ''),
+            'Dave': lambda v: f'+{v:.1f}' if pd.notna(v) and v > 0 else (f'{v:.1f}' if pd.notna(v) else ''),
+            'Stu': lambda v: f'+{v:.1f}' if pd.notna(v) and v > 0 else (f'{v:.1f}' if pd.notna(v) else ''),
+        })
+
+        st.dataframe(
+            styled_deltas_df,
+            width='stretch',
+            hide_index=True,
+            column_config={
+                'Draft Round': st.column_config.TextColumn('Draft Round'),
+                'Alex': st.column_config.TextColumn('Alex'),
+                'Dave': st.column_config.TextColumn('Dave'),
+                'Stu': st.column_config.TextColumn('Stu'),
+            },
+        )
+    else:
+        st.info("No drafted round data available for rounds 1-8.")
+else:
+    st.info("No drafted points results data available.")
