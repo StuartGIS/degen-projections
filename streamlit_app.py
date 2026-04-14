@@ -758,7 +758,7 @@ st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width=
 st.divider()
 st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Season Standings")
-st.write("Updated April 13, 2026, after Masters completion..")
+st.write("Updated April 13, 2026, after Masters completion.")
 
 # Load all drafted_points_results CSVs
 import re
