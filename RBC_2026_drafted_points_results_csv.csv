@@ -1,0 +1,25 @@
+﻿Drafter,Pick,Round,current_pos,player_first_last,current_score,current_points,thru,R1,R2,R3,R4,win,top_5,top_10,make_cut,tourney_num
+Stu,1,1,2,Scottie Scheffler,-18,25,18,68,67,64,67,0,100,100,100,15
+Dave,3,1,1,Matt Fitzpatrick,-18,50,18,65,63,68,70,100,100,100,100,15
+Alex,8,3,3,Si Woo Kim,-16,25,18,66,68,66,68,0,100,100,100,15
+Stu,12,4,T4,Ludvig Aberg,-13,25,18,63,70,68,70,0,100,100,100,15
+Dave,21,7,T4,Collin Morikawa,-13,25,18,67,68,69,67,0,100,100,100,15
+Alex,20,7,T4,Harris English,-13,25,18,64,68,70,69,0,100,100,100,15
+Stu,7,3,T8,Patrick Cantlay,-11,15,18,69,64,68,72,0,0,100,100,15
+Alex,2,1,T12,Xander Schauffele,-10,7,18,69,68,68,69,0,0,0,100,15
+Alex,23,8,T12,Matt McCarty,-10,7,18,69,71,66,68,0,0,0,100,15
+Alex,17,6,T16,Maverick McNealy,-9,7,18,74,67,67,67,0,0,0,100,15
+Stu,6,2,T25,Cameron Young,-8,7,18,71,67,67,71,0,0,0,100,15
+Stu,18,6,T25,Sahith Theegala,-8,7,18,69,67,72,68,0,0,0,100,15
+Dave,4,2,T25,Russell Henley,-8,7,18,68,68,70,70,0,0,0,100,15
+Dave,16,6,T33,Jacob Bridgeman,-7,1,18,75,65,66,71,0,0,0,100,15
+Dave,9,3,T33,Jordan Spieth,-7,1,18,69,72,67,69,0,0,0,100,15
+Alex,14,5,T42,Sepp Straka,-6,1,18,66,67,67,78,0,0,0,100,15
+Stu,13,5,T42,Robert MacIntyre,-6,1,18,66,68,71,73,0,0,0,100,15
+Dave,15,5,T42,Viktor Hovland,-6,1,18,64,65,73,76,0,0,0,100,15
+Alex,5,2,T52,Tommy Fleetwood,-5,1,18,76,67,69,67,0,0,0,100,15
+Stu,19,7,T52,Sudarshan Yellamaraju,-5,1,18,74,66,71,68,0,0,0,100,15
+Stu,22,8,T74,Austin Smotherman,2,1,18,74,73,69,70,0,0,0,100,15
+Dave,10,4,T74,Jake Knapp,2,1,18,71,75,69,71,0,0,0,100,15
+Alex,11,4,T77,Justin Thomas,3,1,18,76,75,70,66,0,0,0,100,15
+Dave,24,8,80,Billy Horschel,5,1,18,71,76,72,70,0,0,0,100,15
