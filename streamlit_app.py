@@ -218,11 +218,17 @@ def reformat_name(name):
         return f"{parts[1]} {parts[0]}"
     return name
 
-if 'player_name' in dg_pga_live_predictions_df.columns:
-    dg_pga_live_predictions_df['player_first_last'] = dg_pga_live_predictions_df['player_name'].apply(reformat_name)
-elif 'player_first_last' in dg_pga_live_predictions_df.columns:
-    # Optionally reformat if needed, or just keep as is
-    pass
+def build_display_name(series_df: pd.DataFrame) -> pd.Series:
+    # Prefer individual player names; fall back to team names for team-format events.
+    if 'player_name' in series_df.columns:
+        return series_df['player_name'].astype(str).apply(reformat_name)
+    if 'team_name' in series_df.columns:
+        return series_df['team_name'].astype(str)
+    if 'player_first_last' in series_df.columns:
+        return series_df['player_first_last'].astype(str)
+    return pd.Series(np.nan, index=series_df.index)
+
+dg_pga_live_predictions_df['player_first_last'] = build_display_name(dg_pga_live_predictions_df)
 # dg_pga_live_predictions_df['projected_points'] = (
 #     dg_pga_live_predictions_df['win'] * 25 +
 #     dg_pga_live_predictions_df['top_5'] * 10 +
@@ -645,15 +651,8 @@ dg_pga_pre_tournament_predictions_df['projected_points'] = (
 )
 
 
-# Clean up player names and show pre-tournament projected points
-
-def reformat_name(name):
-    parts = name.split(', ')
-    if len(parts) == 2:
-        return f"{parts[1]} {parts[0]}"
-    return name
-
-dg_pga_pre_tournament_predictions_df['player_first_last'] = dg_pga_pre_tournament_predictions_df['player_name'].apply(reformat_name)
+# Clean up display names and show pre-tournament projected points
+dg_pga_pre_tournament_predictions_df['player_first_last'] = build_display_name(dg_pga_pre_tournament_predictions_df)
 dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[['player_first_last','win','top_5','top_10','top_25','make_cut','projected_points','event_name']]
 
 # Convert probability columns to percentages for display
