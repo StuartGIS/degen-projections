@@ -443,7 +443,7 @@ st.dataframe(draft_results, width='stretch', hide_index=True)
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
-st.write("Updated April 19, 2026, after RBC Heritage completion.")
+st.write("Updated April 26, 2026, after Zurich completion.")
 
 import os
 relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
@@ -452,7 +452,14 @@ if relevant_files:
     all_data = []
     points_wins = {'Alex': 0, 'Dave': 0, 'Stu': 0}
     total_drafts = len(relevant_files)
-    per_draft_pcts = []
+
+    def normalize_flag(series: pd.Series) -> pd.Series:
+        vals = pd.to_numeric(series, errors='coerce').fillna(0)
+        # Files store indicator columns as 0/100; this also supports 0/1.
+        vals = vals.where(vals <= 1, vals / 100.0)
+        return (vals > 0).astype(int)
+
+    winner_count_by_drafter = {'Alex': 0, 'Dave': 0, 'Stu': 0}
     for file in relevant_files:
         df = pd.read_csv(file)
         all_data.append(df)
@@ -462,39 +469,36 @@ if relevant_files:
         winners = drafter_sums[drafter_sums == max_points].index
         for winner in winners:
             points_wins[winner] += 1
-        # Per draft stats
-        draft_stats = df.groupby('Drafter').agg(
-            total_players=('Drafter', 'size'),
-            made_cut_count=('make_cut', 'sum'),
-            top25_count=('current_points', lambda x: (x >= 7).sum()),
-            top10_count=('top_10', 'sum'),
-            top5_count=('top_5', 'sum'),
-            sum_points=('current_points', 'sum'),
-        ).reset_index()
-        # Calculate winner_count as 1 if any win > 0 for that drafter in this draft, else 0
-        win_by_drafter = df.groupby('Drafter')['win'].sum().reset_index()
-        win_by_drafter['winner_count'] = (win_by_drafter['win'] > 0).astype(int)
-        draft_stats = pd.merge(draft_stats, win_by_drafter[['Drafter', 'winner_count']], on='Drafter', how='left')
-        draft_stats['made_cut_pct'] = draft_stats['made_cut_count'] / draft_stats['total_players']
-        draft_stats['top25_pct'] = draft_stats['top25_count'] / draft_stats['total_players'] * 100
-        draft_stats['top10_pct'] = draft_stats['top10_count'] / draft_stats['total_players']
-        draft_stats['top5_pct'] = draft_stats['top5_count'] / draft_stats['total_players']
-        draft_stats['winner_pct'] = draft_stats['winner_count'] * 100
-        per_draft_pcts.append(draft_stats[['Drafter', 'made_cut_pct', 'top25_pct', 'top10_pct', 'top5_pct', 'winner_pct', 'total_players', 'winner_count', 'sum_points']])
+
+        # Winner count is counted once per draft when a drafter has at least one winner.
+        win_by_drafter = df.groupby('Drafter')['win'].sum()
+        for drafter, win_sum in win_by_drafter.items():
+            if drafter in winner_count_by_drafter and pd.notna(win_sum) and float(win_sum) > 0:
+                winner_count_by_drafter[drafter] += 1
+
     combined_df = pd.concat(all_data, ignore_index=True)
-    # Average the percentages
-    all_pcts = pd.concat(per_draft_pcts, ignore_index=True)
-    avg_stats = all_pcts.groupby('Drafter').agg(
-        made_cut_pct=('made_cut_pct', 'mean'),
-        top25_pct=('top25_pct', 'mean'),
-        top10_pct=('top10_pct', 'mean'),
-        top5_pct=('top5_pct', 'mean'),
-        winner_pct=('winner_pct', 'mean'),
-        total_players=('total_players', 'sum'),
-        winner_count=('winner_count', 'sum'),
-        avg_weekly_points=('sum_points', 'mean'),
-        total_season_points=('sum_points', 'sum'),
+    combined_df['made_cut_flag'] = normalize_flag(combined_df['make_cut'])
+    combined_df['top10_flag'] = normalize_flag(combined_df['top_10'])
+    combined_df['top5_flag'] = normalize_flag(combined_df['top_5'])
+    combined_df['top25_flag'] = (pd.to_numeric(combined_df['current_points'], errors='coerce').fillna(0) >= 7).astype(int)
+
+    avg_stats = combined_df.groupby('Drafter').agg(
+        total_players=('Drafter', 'size'),
+        made_cut_count=('made_cut_flag', 'sum'),
+        top25_count=('top25_flag', 'sum'),
+        top10_count=('top10_flag', 'sum'),
+        top5_count=('top5_flag', 'sum'),
+        total_season_points=('current_points', 'sum'),
     ).reset_index()
+
+    avg_stats['winner_count'] = avg_stats['Drafter'].map(winner_count_by_drafter).fillna(0).astype(int)
+    avg_stats['made_cut_pct'] = avg_stats['made_cut_count'] / avg_stats['total_players'] * 100
+    avg_stats['top25_pct'] = avg_stats['top25_count'] / avg_stats['total_players'] * 100
+    avg_stats['top10_pct'] = avg_stats['top10_count'] / avg_stats['total_players'] * 100
+    avg_stats['top5_pct'] = avg_stats['top5_count'] / avg_stats['total_players'] * 100
+    avg_stats['winner_pct'] = avg_stats['winner_count'] / total_drafts * 100
+    avg_stats['avg_weekly_points'] = avg_stats['total_season_points'] / total_drafts
+
     # Format
     avg_stats['Made Cut %'] = avg_stats['made_cut_pct'].round(2).astype(str) + '%'
     avg_stats['Top 25 %'] = avg_stats['top25_pct'].round(2).astype(str) + '%'
@@ -508,11 +512,11 @@ if relevant_files:
     avg_stats['Tournaments Played'] = str(total_drafts)
     avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1).map(lambda x: f"{x:.1f}")
     avg_stats['Total Season Points'] = avg_stats['total_season_points'].astype(str)
-    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$50', 'Dave': '$60', 'Stu': '$20'})
+    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$50', 'Dave': '$60', 'Stu': '$30'})
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
     display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Points Wins %', 'Points Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
     # Add Geography Wins row
-    geography_wins = pd.Series({'Alex': 3, 'Dave': 3, 'Stu': 7})
+    geography_wins = pd.Series({'Alex': 3, 'Dave': 3, 'Stu': 8})
     display_stats.loc['Geography Wins'] = geography_wins
     
     def highlight_rank(s):
@@ -758,7 +762,7 @@ st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width=
 st.divider()
 st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Season Standings")
-st.write("Updated April 19, 2026, after RBC Heritage completion.")
+st.write("Updated April 26, 2026, after Zurich completion.")
 
 # Load all drafted_points_results CSVs
 import re
@@ -877,7 +881,7 @@ else:
 st.divider()
 st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
-st.write("This table includes all players from all tournaments. Updated April 19, 2026, after RBC Heritage completion.")
+st.write("This table includes all players from all tournaments. Updated April 26, 2026, after Zurich completion.")
 
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
 import glob
