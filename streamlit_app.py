@@ -43,8 +43,8 @@ st.divider()
 # st.divider()
 
 # show tournament info
-st.header("Zurich Classic")
-st.markdown("TPC Louisiana  \nAvondale, Louisiana  \nApril 23-26, 2026")
+st.header("Cadillac Championship")
+st.markdown("The Blue Monster at Trump National Doral  \nMiami, Florida  \nApril 30-May 3, 2026")
 # Display an image from a local file
 # st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 st.divider()
@@ -283,7 +283,7 @@ dg_pga_live_predictions_df = dg_pga_live_predictions_df.sort_values('current_sco
 styled_dg_live = dg_pga_live_predictions_df.style.apply(style_live_rows, axis=1)
 
 # Join draft results with live predictions and calculate projected points
-draft_results = pd.read_csv("Zurich_draft_results_csv.csv")
+draft_results = pd.read_csv("Cadillac_draft_results_csv.csv")
 
 merged_players_live_preds_df = pd.merge(draft_results, dg_pga_live_predictions_df, left_on='Player', right_on='player_first_last', how='left')
 # merged_players_live_preds_df['projected_points'] = (
@@ -433,7 +433,7 @@ st.dataframe(styled_dg_live, width='stretch', hide_index=True, column_config={
 st.divider()
 
 # adjust path if needed
-draft_results = pd.read_csv("Zurich_draft_results_csv.csv")
+draft_results = pd.read_csv("Cadillac_draft_results_csv.csv")
 
 # Anchor for: Draft Results
 st.markdown('<a id="draft-results"></a>', unsafe_allow_html=True)
