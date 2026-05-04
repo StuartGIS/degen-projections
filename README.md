@@ -11,6 +11,8 @@ After every tournament:
 4. Add a tourney_num column to that table and give it its correct number.
 5. Upload those csv's to the repo.
 6. Update the season standings descriptions x3
+7. Update season earnings
+8. Update season geography picks
 
 
 ### How to run it on your own machine
