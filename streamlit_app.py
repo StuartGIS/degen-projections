@@ -44,7 +44,7 @@ st.divider()
 
 # show tournament info
 st.header("Canadian Open")
-st.markdown("TPC Toronto at Osprey Valley  \nCaledon Village, Canada  \nJune 11-15, 2026")
+st.markdown("TPC Toronto at Osprey Valley  \nCaledon Village, Canada  \nJune 11-14, 2026")
 # Display an image from a local file
 # st.image("/workspaces/degen-projections/el_cardonal.jpeg")
 st.divider()
