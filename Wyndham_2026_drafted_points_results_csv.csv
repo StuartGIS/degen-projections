@@ -1,0 +1,25 @@
+﻿Drafter,Pick,Round,current_pos,player_first_last,current_score,current_points,thru,R1,R2,R3,R4,win,top_5,top_10,make_cut,tourney_num
+Stu,5,2,T5,Tom Kim,-15,25,18,65,67,63,70,0,100,100,100,31
+Dave,3,1,T7,Hideki Matsuyama,-14,15,18,65,69,66,66,0,0,100,100,31
+Alex,18,6,T7,Alex Smalley,-14,15,18,67,64,65,70,0,0,100,100,31
+Stu,11,4,T14,Justin Thomas,-12,7,18,66,70,66,66,0,0,0,100,31
+Stu,14,5,T14,Davis Thompson,-12,7,18,64,68,65,71,0,0,0,100,31
+Dave,9,3,T14,Sungjae Im,-12,7,18,67,68,67,66,0,0,0,100,31
+Stu,17,6,T14,Jordan Smith,-12,7,18,65,64,70,69,0,0,0,100,31
+Dave,10,4,T25,Maverick McNealy,-9,7,18,67,67,73,64,0,0,0,100,31
+Alex,13,5,T29,Ben Kohles,-8,1,18,66,71,65,70,0,0,0,100,31
+Alex,19,7,T29,Eric Cole,-8,1,18,63,69,71,69,0,0,0,100,31
+Stu,8,3,T29,Aaron Rai,-8,1,18,69,67,69,67,0,0,0,100,31
+Stu,2,1,T29,Jackson Koivun,-8,1,18,67,68,66,71,0,0,0,100,31
+Dave,21,7,T54,Michael Kim,-5,1,18,67,68,69,71,0,0,0,100,31
+Alex,7,3,T61,Alex Fitzpatrick,-4,1,18,66,68,73,69,0,0,0,100,31
+Alex,1,1,T61,Cameron Young,-4,1,18,71,66,72,67,0,0,0,100,31
+Dave,4,2,CUT,Ryan Gerard,-2,0,0,67,71,,,0,0,0,0,31
+Alex,12,4,CUT,Mac Meissner,-2,0,0,68,70,,,0,0,0,0,31
+Dave,16,6,CUT,Brian Harman,-2,0,0,67,71,,,0,0,0,0,31
+Alex,6,2,CUT,Ben Griffin,-2,0,0,69,69,,,0,0,0,0,31
+Dave,15,5,CUT,Harris English,0,0,0,74,66,,,0,0,0,0,31
+Stu,20,7,CUT,Ryo Hisatsune,1,0,0,73,68,,,0,0,0,0,31
+Alex,22,8,CUT,William Mouw,1,0,0,68,73,,,0,0,0,0,31
+Stu,23,8,CUT,Matt Kuchar,1,0,0,69,72,,,0,0,0,0,31
+Dave,24,8,CUT,Aldrich Potgieter,8,0,0,70,78,,,0,0,0,0,31
