@@ -7,6 +7,10 @@ import requests
 # from io import StringIO
 import json
 
+# DataGolf tour switch: use "euro" for DP World Tour events and "pga" for PGA Tour events.
+# DATAGOLF_TOUR = "pga"
+DATAGOLF_TOUR = "euro"
+
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"><h1 style="font-family: \'Lobster\', cursive; color: gold; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">🏌️‍♂️ Degenerates</h1>', unsafe_allow_html=True)
 st.divider()
 # st.write(
@@ -205,9 +209,9 @@ def style_drafter_live_rows(row):
     
     return styles
 
-# adjust URL if needed
+# DataGolf live scoring and projections for the selected tour.
 dg_pga_live_predictions_df = load_datagolf_live_preds(
-    "https://feeds.datagolf.com/preds/in-play?tour=pga&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
+    f"https://feeds.datagolf.com/preds/in-play?tour={DATAGOLF_TOUR}&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
 )
 
 # show full field live interactive table
@@ -638,7 +642,7 @@ def load_datagolf_pre_tournament_preds(url: str) -> pd.DataFrame:
         return pd.DataFrame()
 
 dg_pga_pre_tournament_predictions_df = load_datagolf_pre_tournament_preds(
-    "https://feeds.datagolf.com/preds/pre-tournament?tour=pga&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
+    f"https://feeds.datagolf.com/preds/pre-tournament?tour={DATAGOLF_TOUR}&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
 )
 
 dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[dg_pga_pre_tournament_predictions_df['model'] == 'baseline_history_fit']
@@ -1170,7 +1174,7 @@ st.write("Each row shows a player's average stats for all measured rounds played
 
 @st.cache_data(ttl=300)
 def load_all_2026_stats():
-    url = "https://feeds.datagolf.com/historical-raw-data/rounds?tour=pga&event_id=all&year=2026&file_format=json&key=57b951c096fc3f4eb093c152f5a5"
+    url = f"https://feeds.datagolf.com/historical-raw-data/rounds?tour={DATAGOLF_TOUR}&event_id=all&year=2026&file_format=json&key=57b951c096fc3f4eb093c152f5a5"
     try:
         data = requests.get(url).json()
         rows = []
