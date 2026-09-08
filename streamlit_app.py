@@ -447,7 +447,7 @@ st.dataframe(draft_results, width='stretch', hide_index=True)
 # Season standings
 st.markdown('<a id="season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Season Standings")
-st.write("Updated September 2, 2026 after Tour Championship completion.")
+st.write("Updated September 8, 2026 after Swiss Masters completion.")
 
 import os
 relevant_files = [f for f in os.listdir('.') if 'drafted_points_result' in f and f.endswith('.csv')]
@@ -516,11 +516,11 @@ if relevant_files:
     avg_stats['Tournaments Played'] = str(total_drafts)
     avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1).map(lambda x: f"{x:.1f}")
     avg_stats['Total Season Points'] = avg_stats['total_season_points'].astype(str)
-    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$90', 'Dave': '$150', 'Stu': '$90'})
+    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$90', 'Dave': '$150', 'Stu': '$100'})
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
     display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Points Wins %', 'Points Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
     # Add Geography Wins row
-    geography_wins = pd.Series({'Alex': 7, 'Dave': 5, 'Stu': 20})
+    geography_wins = pd.Series({'Alex': 7, 'Dave': 5, 'Stu': 21})
     display_stats.loc['Geography Wins'] = geography_wins
     
     def highlight_rank(s):
@@ -766,7 +766,7 @@ st.dataframe(dg_pga_pre_tournament_predictions_df.reset_index(drop=True), width=
 st.divider()
 st.markdown('<a id="drafted-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("Drafted Players Season Standings")
-st.write("Updated September 2, 2026 after Tour Championship completion.")
+st.write("Updated September 8, 2026 after Swiss Masters completion.")
 
 # Load all drafted_points_results CSVs
 import re
@@ -885,7 +885,7 @@ else:
 st.divider()
 st.markdown('<a id="all-players-season-standings"></a>', unsafe_allow_html=True)
 st.subheader("All Players Season Standings")
-st.write("This table includes all players from all tournaments. Updated September 2, 2026 after Tour Championship completion.")
+st.write("This table includes all players from all tournaments. Updated September 8, 2026 after Swiss Masters completion.")
 
 # Find all full_field_points_results CSVs and extract tourney_num and event_name
 import glob
