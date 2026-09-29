@@ -243,13 +243,16 @@ dg_pga_live_predictions_df['player_first_last'] = build_display_name(dg_pga_live
 # )
 
 # derive current_points from current_pos using the tournament rules
-def current_points_from_pos(pos):
+def current_points_from_pos(pos, r2=None):
     import re
     if pd.isna(pos):
         return 1
     s = str(pos).strip().upper()
-    # WD or CUT => 0 points
-    if s in ("WD", "CUT"):
+    # WD => 1 point if the player had completed round 2 (i.e. made the cut) before withdrawing, else 0
+    if s == "WD":
+        return 1 if pd.notna(r2) and str(r2).strip() != '' else 0
+    # CUT => 0 points
+    if s == "CUT":
         return 0
     # remove leading 'T' for tied positions (T1, T2, ...)
     if s.startswith('T'):
@@ -271,7 +274,9 @@ def current_points_from_pos(pos):
         return 7
     return 1
 
-dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df['current_pos'].apply(current_points_from_pos)
+dg_pga_live_predictions_df['current_points'] = dg_pga_live_predictions_df.apply(
+    lambda row: current_points_from_pos(row['current_pos'], row.get('R2')), axis=1
+)
 
 
 
