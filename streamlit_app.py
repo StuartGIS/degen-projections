@@ -8,8 +8,8 @@ import requests
 import json
 
 # DataGolf tour switch: use "euro" for DP World Tour events and "pga" for PGA Tour events.
-# DATAGOLF_TOUR = "pga"
-DATAGOLF_TOUR = "euro"
+DATAGOLF_TOUR = "pga"
+# DATAGOLF_TOUR = "euro"
 
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet"><h1 style="font-family: \'Lobster\', cursive; color: gold; text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;">🏌️‍♂️ Degenerates</h1>', unsafe_allow_html=True)
 st.divider()
