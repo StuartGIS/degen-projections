@@ -521,11 +521,11 @@ if relevant_files:
     avg_stats['Tournaments Played'] = str(total_drafts)
     avg_stats['Avg Weekly Points'] = avg_stats['avg_weekly_points'].round(1).map(lambda x: f"{x:.1f}")
     avg_stats['Total Season Points'] = avg_stats['total_season_points'].astype(str)
-    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$90', 'Dave': '$190', 'Stu': '$120'})
+    avg_stats['Season Earnings'] = avg_stats['Drafter'].map({'Alex': '$90', 'Dave': '$190', 'Stu': '$130'})
     display_stats = avg_stats[['Drafter', 'Made Cut %', 'Top 25 %', 'Top 10 %', 'Top 5 %', 'Winner %', 'Winner Count', 'Points Win %', 'Points Win Count', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']].set_index('Drafter').T
     display_stats.index = ['Made Cut', 'Top 25', 'Top 10', 'Top 5', 'Winners %', 'Winners', 'Points Wins %', 'Points Wins', 'Tournaments Played', 'Avg Weekly Points', 'Total Season Points', 'Season Earnings']
     # Add Geography Wins row
-    geography_wins = pd.Series({'Alex': 7, 'Dave': 7, 'Stu': 25})
+    geography_wins = pd.Series({'Alex': 8, 'Dave': 7, 'Stu': 25})
     display_stats.loc['Geography Wins'] = geography_wins
     
     def highlight_rank(s):
