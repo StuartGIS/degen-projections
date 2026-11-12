@@ -650,7 +650,8 @@ dg_pga_pre_tournament_predictions_df = load_datagolf_pre_tournament_preds(
     f"https://feeds.datagolf.com/preds/pre-tournament?tour={DATAGOLF_TOUR}&add_position=25&file_format=csv&key=57b951c096fc3f4eb093c152f5a5"
 )
 
-dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[dg_pga_pre_tournament_predictions_df['model'] == 'baseline_history_fit']
+# dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[dg_pga_pre_tournament_predictions_df['model'] == 'baseline_history_fit']
+dg_pga_pre_tournament_predictions_df = dg_pga_pre_tournament_predictions_df[dg_pga_pre_tournament_predictions_df['model'] == 'baseline']
 
 
 #calculate projected points based on proposed 2026 system
